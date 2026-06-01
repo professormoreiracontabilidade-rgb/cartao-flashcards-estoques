@@ -1,0 +1,1462 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cartões de Memória - Contabilidade de Estoques (CPC 16)</title>
+    <!-- Tailwind CSS CDN para estilização rápida e responsiva -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Efeitos 3D de rotação para os cartões de memória */
+        .perspective-1000 {
+            perspective: 1000px;
+        }
+        .transform-style-3d {
+            transform-style: preserve-3d;
+        }
+        .backface-hidden {
+            backface-visibility: hidden;
+        }
+        .rotate-y-180 {
+            transform: rotateY(180deg);
+        }
+        
+        /* Barra de rolagem personalizada de aspeto premium */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col antialiased selection:bg-indigo-100">
+
+    <!-- Interface Principal do Utilizador -->
+    <div id="app" class="flex flex-col md:flex-row min-h-screen w-full">
+        
+        <!-- Painel de Navegação Lateral (Desktop) / Barra de Cabeçalho (Mobile) -->
+        <aside class="w-full md:w-80 bg-slate-900 text-slate-100 flex flex-col shrink-0 border-r border-slate-800 shadow-xl">
+            <!-- Logótipo e Título -->
+            <div class="p-6 border-b border-slate-800 flex items-center space-x-3">
+                <div class="bg-gradient-to-tr from-indigo-500 to-emerald-400 p-2 rounded-xl text-white shadow-md">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg leading-tight">Estoques Expert</h1>
+                    <p class="text-xs text-slate-400">Contabilidade (CPC 16)</p>
+                </div>
+            </div>
+
+            <!-- Menus de Navegação -->
+            <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+                <button onclick="changeView('dashboard')" id="nav-dashboard" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition text-slate-300 hover:bg-slate-800 hover:text-white">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2v-4zM14 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2v-4z" />
+                    </svg>
+                    <span class="font-medium text-sm">Painel de Desempenho</span>
+                </button>
+
+                <button onclick="changeView('study')" id="nav-study" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition text-slate-300 hover:bg-slate-800 hover:text-white">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                    </svg>
+                    <span class="font-medium text-sm">Estudar Cartões</span>
+                </button>
+
+                <button onclick="changeView('deck')" id="nav-deck" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition text-slate-300 hover:bg-slate-800 hover:text-white">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+                    </svg>
+                    <span class="font-medium text-sm">Explorador do Baralho</span>
+                </button>
+
+                <button onclick="changeView('settings')" id="nav-settings" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition text-slate-300 hover:bg-slate-800 hover:text-white">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    <span class="font-medium text-sm">Configuração</span>
+                </button>
+            </nav>
+
+            <!-- Mini Widget de Informação Básica do Utilizador -->
+            <div class="p-4 border-t border-slate-800 bg-slate-950/40 text-xs text-slate-400 space-y-2">
+                <div class="flex justify-between">
+                    <span>Sessão de Estudo:</span>
+                    <span class="font-semibold text-slate-200" id="study-streak">0 dias</span>
+                </div>
+                <div class="flex justify-between">
+                    <span>Taxa de Acertos Global:</span>
+                    <span class="font-semibold text-indigo-400" id="overall-success">0%</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Área Principal de Conteúdo -->
+        <main class="flex-1 flex flex-col overflow-y-auto p-4 md:p-8">
+            
+            <!-- NOTIFICAÇÃO POPUP INTEGRADA -->
+            <div id="toast" class="fixed top-5 right-5 z-50 transform translate-y-10 opacity-0 pointer-events-none transition-all duration-300 bg-slate-900 text-white px-6 py-3 rounded-xl shadow-2xl flex items-center space-x-3 border border-slate-700">
+                <span id="toast-icon" class="text-xl">🔔</span>
+                <span id="toast-text" class="text-sm font-medium"></span>
+            </div>
+
+            <!-- ================= VISTA 1: PAINEL DE DESEMPENHO (DASHBOARD) ================= -->
+            <section id="view-dashboard" class="space-y-6">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-900">Estatísticas e Monitorização</h2>
+                        <p class="text-sm text-slate-500">Acompanhe a sua evolução na preparação para concursos.</p>
+                    </div>
+                    <!-- Filtro Rápido de Bancas no Dashboard -->
+                    <div class="flex gap-2">
+                        <button onclick="resetAppProgress()" class="bg-white hover:bg-rose-50 text-rose-600 border border-rose-200 px-4 py-2 rounded-xl text-sm font-semibold transition flex items-center space-x-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                            <span>Reiniciar Progresso</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Painel de Cartões de Visão Geral -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- Progresso Geral -->
+                    <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between">
+                        <div>
+                            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Cartões Estudados</p>
+                            <h3 class="text-3xl font-extrabold text-slate-800 mt-1" id="stat-studied">0 / 0</h3>
+                            <p class="text-xs text-slate-500 mt-2" id="stat-percent-completed">0% do baralho revisto</p>
+                        </div>
+                        <div class="p-3 rounded-xl bg-indigo-50 text-indigo-600">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                            </svg>
+                        </div>
+                    </div>
+
+                    <!-- Taxa de Acertos -->
+                    <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between">
+                        <div>
+                            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Taxa de Acertos</p>
+                            <h3 class="text-3xl font-extrabold text-emerald-600 mt-1" id="stat-accuracy">0%</h3>
+                            <p class="text-xs text-slate-500 mt-2" id="stat-accuracy-sub">Baseado nas escolhas ativas</p>
+                        </div>
+                        <div class="p-3 rounded-xl bg-emerald-50 text-emerald-600">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                            </svg>
+                        </div>
+                    </div>
+
+                    <!-- Cartões Favoritados -->
+                    <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between">
+                        <div>
+                            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Favoritos (Estrelas)</p>
+                            <h3 class="text-3xl font-extrabold text-amber-500 mt-1" id="stat-starred">0</h3>
+                            <p class="text-xs text-slate-500 mt-2">Para revisão prioritária</p>
+                        </div>
+                        <div class="p-3 rounded-xl bg-amber-50 text-amber-500">
+                            <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                            </svg>
+                        </div>
+                    </div>
+
+                    <!-- Eficiência de Estudo -->
+                    <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between">
+                        <div>
+                            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Cartões Decorados</p>
+                            <h3 class="text-3xl font-extrabold text-blue-600 mt-1" id="stat-learned">0</h3>
+                            <p class="text-xs text-slate-500 mt-2" id="stat-learned-percent">0% de retenção alta</p>
+                        </div>
+                        <div class="p-3 rounded-xl bg-blue-50 text-blue-600">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-13.824-4.514 12.083 12.083 0 01.666-6.479L12 14zm-4 6v-7.5l4-2.222" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gráficos de Divisão Nativos por Banca Examinadora e Tópico -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Gráfico Circular Centralizado (SVG) -->
+                    <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col items-center justify-center">
+                        <h4 class="font-bold text-slate-800 self-start mb-4">Progresso do Baralho</h4>
+                        <div class="relative w-44 h-44 flex items-center justify-center">
+                            <!-- Gráfico de Rosca SVG Reativo -->
+                            <svg class="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
+                                <path class="text-slate-100" stroke-width="3" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                <path id="svg-progress-circle" class="text-indigo-600 transition-all duration-500" stroke-dasharray="0, 100" stroke-width="3.2" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                            </svg>
+                            <div class="absolute text-center">
+                                <span id="progress-circle-text" class="text-2xl font-extrabold text-slate-800">0%</span>
+                                <p class="text-slate-400 text-[10px] uppercase font-bold tracking-wider">Revisto</p>
+                            </div>
+                        </div>
+                        <div class="flex space-x-6 mt-6 text-xs text-slate-600">
+                            <div class="flex items-center space-x-2">
+                                <span class="w-3 h-3 rounded-full bg-indigo-600 block"></span>
+                                <span id="lbl-circle-completed">Estudado: 0</span>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <span class="w-3 h-3 rounded-full bg-slate-100 block"></span>
+                                <span id="lbl-circle-pending">Pendente: 0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Desempenho por Banca Examinadora -->
+                    <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm lg:col-span-2">
+                        <h4 class="font-bold text-slate-800 mb-4">Desempenho por Banca Examinadora</h4>
+                        <div class="space-y-4" id="board-breakdown-container">
+                            <!-- Injetado dinamicamente via JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Histórico de Estudo ou Lista Rápida de Cartões com Estrela -->
+                <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+                    <h4 class="font-bold text-slate-800 mb-4">Cartões Marcados para Revisão Prioritária</h4>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse text-sm">
+                            <thead>
+                                <tr class="border-b border-slate-100 text-slate-400 font-semibold">
+                                    <th class="py-3 px-4">ID</th>
+                                    <th class="py-3 px-4">Banca/Concurso</th>
+                                    <th class="py-3 px-4">Excerto do Item</th>
+                                    <th class="py-3 px-4">Gabarito</th>
+                                    <th class="py-3 px-4 text-right">Ação</th>
+                                </tr>
+                            </thead>
+                            <tbody id="starred-table-body" class="divide-y divide-slate-100 text-slate-600">
+                                <!-- Preenchido dinamicamente se houver cartões favoritados -->
+                            </tbody>
+                        </table>
+                        <div id="starred-empty-state" class="text-center py-8 text-slate-400 text-xs flex flex-col items-center justify-center space-y-2">
+                            <span class="text-2xl">⭐</span>
+                            <p>Sem cartões favoritos no momento. Adicione estrelas para vê-los aqui!</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================= VISTA 2: ESTUDO DE CARTÕES (FLIP CARD ENGINE) ================= -->
+            <section id="view-study" class="hidden max-w-4xl mx-auto w-full flex-1 flex flex-col justify-between space-y-6">
+                <!-- Cabeçalho de Estudo: Seletor de Modo, Filtros Ativos -->
+                <div class="flex flex-col sm:flex-row justify-between items-center bg-white p-4 rounded-2xl border border-slate-100 shadow-sm gap-4">
+                    <div class="flex items-center space-x-3">
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wide">Modo de Estudo:</span>
+                        <div class="inline-flex rounded-lg p-1 bg-slate-100">
+                            <button onclick="setStudyMode('flashcard')" id="btn-mode-flashcard" class="px-3 py-1.5 rounded-md text-xs font-bold transition">📚 Cartão Tradicional</button>
+                            <button onclick="setStudyMode('quiz')" id="btn-mode-quiz" class="px-3 py-1.5 rounded-md text-xs font-bold transition">⚡ Exame C/E</button>
+                        </div>
+                    </div>
+                    <div class="text-slate-500 text-xs font-semibold flex items-center space-x-2">
+                        <span class="bg-indigo-50 text-indigo-700 px-2.5 py-1 rounded-full" id="study-progress-badge">Cartão 1/1</span>
+                    </div>
+                </div>
+
+                <!-- O Cartão 3D de Memória -->
+                <div class="perspective-1000 w-full h-[360px] cursor-pointer" onclick="flipCurrentCard()">
+                    <div id="study-card-inner" class="w-full h-full transform-style-3d transition-transform duration-500 relative rounded-3xl shadow-xl">
+                        
+                        <!-- Lado Frontal do Cartão -->
+                        <div class="absolute inset-0 w-full h-full bg-white rounded-3xl p-6 md:p-8 flex flex-col justify-between border-2 border-slate-200/80 backface-hidden shadow-sm">
+                            <!-- Metadados da Questão -->
+                            <div class="flex justify-between items-start">
+                                <div class="space-y-1">
+                                    <span class="bg-indigo-100 text-indigo-800 text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-full tracking-wider" id="card-front-banca">Banca</span>
+                                    <span class="bg-slate-100 text-slate-800 text-[10px] font-bold px-2.5 py-1 rounded-full" id="card-front-year">Ano</span>
+                                </div>
+                                <button onclick="event.stopPropagation(); toggleStarCurrentCard()" class="text-slate-300 hover:text-amber-400 transition transform hover:scale-110 text-2xl" id="btn-star-card">
+                                    ★
+                                </button>
+                            </div>
+                            
+                            <!-- Corpo Principal da Questão -->
+                            <div class="flex-1 flex flex-col justify-center text-center px-2 md:px-6 my-4 overflow-y-auto max-h-[180px]">
+                                <h3 class="text-slate-400 text-xs uppercase font-extrabold tracking-widest mb-2" id="card-front-title">Questão do Concurso</h3>
+                                <p class="text-slate-800 text-base md:text-lg font-medium leading-relaxed" id="card-front-text">Enunciado da questão será inserido aqui...</p>
+                            </div>
+                            
+                            <!-- Dica do Rodapé -->
+                            <div class="flex items-center justify-center text-slate-400 text-xs font-semibold select-none">
+                                <svg class="w-4 h-4 mr-1 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 4.79M9 11h.01M12 11h.01M15 11h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                <span>Clique no cartão para o rodar</span>
+                            </div>
+                        </div>
+
+                        <!-- Lado Traseiro do Cartão -->
+                        <div class="absolute inset-0 w-full h-full bg-slate-900 text-white rounded-3xl p-6 md:p-8 flex flex-col justify-between border-2 border-slate-800 rotate-y-180 backface-hidden shadow-2xl">
+                            <!-- Metadados / Resposta -->
+                            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                                <span class="bg-emerald-500 text-slate-950 text-xs font-extrabold uppercase px-3 py-1 rounded-full tracking-wide">Gabarito: Certo</span>
+                                <span class="text-slate-400 text-xs font-semibold" id="card-back-banca">CPC 16 / IAS 2</span>
+                            </div>
+
+                            <!-- Explicação do Especialista com Área de Rolagem -->
+                            <div class="flex-1 my-4 overflow-y-auto pr-2 space-y-3">
+                                <h4 class="text-indigo-400 font-bold text-xs uppercase tracking-widest flex items-center">
+                                    <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                                    </svg>
+                                    Explicação Didática
+                                </h4>
+                                <p class="text-slate-300 text-sm leading-relaxed" id="card-back-explanation">
+                                    A explicação contável detalhada será inserida aqui...
+                                </p>
+                            </div>
+
+                            <!-- Rodapé de Controle de Visualização -->
+                            <div class="text-center text-slate-500 text-[10px] select-none">
+                                Clique novamente para reverter para o enunciado da questão.
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Controlos Dinâmicos de Estudo -->
+                <div class="space-y-4">
+                    <!-- Modo Quiz: Opções de Resposta Certo / Errado -->
+                    <div id="quiz-controls" class="hidden grid grid-cols-2 gap-4">
+                        <button onclick="submitQuizAnswer(true)" class="bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white font-bold py-4 rounded-2xl shadow-lg transition transform hover:-translate-y-0.5 active:translate-y-0 text-center flex flex-col items-center justify-center">
+                            <span class="text-lg">✔️ Certo</span>
+                            <span class="text-[10px] opacity-75 font-normal mt-1">Concordo com a assertiva</span>
+                        </button>
+                        <button onclick="submitQuizAnswer(false)" class="bg-rose-600 hover:bg-rose-500 active:bg-rose-700 text-white font-bold py-4 rounded-2xl shadow-lg transition transform hover:-translate-y-0.5 active:translate-y-0 text-center flex flex-col items-center justify-center">
+                            <span class="text-lg">❌ Errado</span>
+                            <span class="text-[10px] opacity-75 font-normal mt-1">Discordo da assertiva</span>
+                        </button>
+                    </div>
+
+                    <!-- Modo Flashcard Tradicional: "Sabia" / "Não Sabia" -->
+                    <div id="flashcard-controls" class="grid grid-cols-2 gap-4">
+                        <button onclick="gradeFlashcard(false)" class="bg-amber-100 hover:bg-amber-200 active:bg-amber-300 text-amber-900 font-bold py-4 rounded-2xl shadow-sm transition flex flex-col items-center justify-center">
+                            <span class="text-sm">⚠️ Não Sabia / Errei</span>
+                            <span class="text-[10px] text-amber-700 font-normal mt-1">Mostrar explicação e marcar para revisão</span>
+                        </button>
+                        <button onclick="gradeFlashcard(true)" class="bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 text-white font-bold py-4 rounded-2xl shadow-md transition flex flex-col items-center justify-center">
+                            <span class="text-sm">⭐ Eu Sabia!</span>
+                            <span class="text-[10px] text-indigo-200 font-normal mt-1">Marcar como decorado e avançar</span>
+                        </button>
+                    </div>
+
+                    <!-- Barra Secundária de Controlo: Avançar/Retroceder manual e Rodar -->
+                    <div class="flex items-center justify-between gap-4">
+                        <button onclick="prevCard()" class="bg-white hover:bg-slate-100 border border-slate-200 px-4 py-3 rounded-xl text-slate-700 font-semibold transition text-sm flex items-center space-x-2">
+                            <span>⬅️</span> <span>Anterior</span>
+                        </button>
+                        <button onclick="flipCurrentCard()" class="bg-white hover:bg-slate-100 border border-slate-200 px-8 py-3 rounded-xl text-slate-800 font-bold transition text-sm flex items-center space-x-2">
+                            <span>🔄 Rodar Cartão</span>
+                        </button>
+                        <button onclick="nextCard()" class="bg-white hover:bg-slate-100 border border-slate-200 px-4 py-3 rounded-xl text-slate-700 font-semibold transition text-sm flex items-center space-x-2">
+                            <span>Seguinte</span> <span>➡️</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- O MEU CADERNO DE NOTAS (Notas de Estudo por Cartão) -->
+                <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h4 class="font-bold text-slate-800 text-sm flex items-center">
+                            <span>📝</span>
+                            <span class="ml-2">O Meu Caderno de Notas</span>
+                        </h4>
+                        <span class="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Guardado no navegador</span>
+                    </div>
+                    <textarea id="card-user-notes" oninput="saveCurrentCardNote()" class="w-full h-24 p-3 border border-slate-200 rounded-xl text-xs text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 placeholder-slate-400 transition" placeholder="Escreva aqui as suas anotações, mnemónicas ou dúvidas sobre este cartão..."></textarea>
+                </div>
+            </section>
+
+            <!-- ================= VISTA 3: EXPLORADOR DO BARALHO (DECK VIEWER) ================= -->
+            <section id="view-deck" class="hidden space-y-6">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-900">Explorador de Cartões</h2>
+                        <p class="text-sm text-slate-500">Navegue pelas questões do CPC 16 em formato de listagem.</p>
+                    </div>
+                    <!-- Estado Ativo dos Filtros -->
+                    <div class="flex items-center space-x-2">
+                        <span class="text-xs font-semibold text-slate-400">Total filtrado:</span>
+                        <span class="bg-slate-200 text-slate-800 text-xs px-2.5 py-1 rounded-full font-bold" id="deck-filtered-count">0</span>
+                    </div>
+                </div>
+
+                <!-- Barra de Pesquisa e Filtros Rápidos -->
+                <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex flex-col md:flex-row gap-4 items-center justify-between">
+                    <!-- Pesquisa -->
+                    <div class="relative w-full md:w-80">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400">
+                            🔍
+                        </span>
+                        <input type="text" id="deck-search-input" oninput="applyDeckFilters()" class="w-full pl-9 pr-4 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 placeholder-slate-400" placeholder="Pesquisar questões...">
+                    </div>
+                    <!-- Filtros Rápidos de Estado -->
+                    <div class="flex flex-wrap gap-2 w-full md:w-auto">
+                        <button onclick="setDeckFilter('all')" id="btn-filter-all" class="px-4 py-2 rounded-xl text-xs font-bold transition">Todos</button>
+                        <button onclick="setDeckFilter('starred')" id="btn-filter-starred" class="px-4 py-2 rounded-xl text-xs font-bold transition">Favoritos ⭐</button>
+                        <button onclick="setDeckFilter('completed')" id="btn-filter-completed" class="px-4 py-2 rounded-xl text-xs font-bold transition">Estudados ✔️</button>
+                        <button onclick="setDeckFilter('pending')" id="btn-filter-pending" class="px-4 py-2 rounded-xl text-xs font-bold transition">Pendentes ⌛</button>
+                    </div>
+                </div>
+
+                <!-- Grelha de Exibição dos Cartões -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="deck-cards-grid">
+                    <!-- Injetado dinamicamente por JS -->
+                </div>
+            </section>
+
+            <!-- ================= VISTA 4: CONFIGURAÇÕES E INSTRUÇÕES ================= -->
+            <section id="view-settings" class="hidden max-w-2xl mx-auto w-full space-y-6">
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-900">Configuração do Sistema</h2>
+                    <p class="text-sm text-slate-500">Ajuste as preferências de aprendizagem e áudio.</p>
+                </div>
+
+                <!-- Painel de Opções -->
+                <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm space-y-6">
+                    <h4 class="font-bold text-slate-800 text-sm">Preferências Gerais</h4>
+                    
+                    <!-- Som -->
+                    <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+                        <div>
+                            <span class="block font-semibold text-slate-800 text-sm">Efeitos Sonoros</span>
+                            <span class="block text-slate-400 text-xs mt-0.5">Sintetizador Web Audio API para acertos e erros</span>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="chk-audio" checked class="sr-only peer">
+                            <div class="w-11 h-6 bg-slate-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+                        </label>
+                    </div>
+
+                    <!-- Testar Sons -->
+                    <div class="flex flex-col space-y-2 border-b border-slate-100 pb-4">
+                        <span class="block font-semibold text-slate-800 text-sm">Testar Sintetizador</span>
+                        <div class="flex gap-2">
+                            <button onclick="AudioSynth.playFlip()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-semibold">🔄 Rodar</button>
+                            <button onclick="AudioSynth.playSuccess()" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 px-3 py-1.5 rounded-lg text-xs font-semibold">✔️ Acerto</button>
+                            <button onclick="AudioSynth.playError()" class="bg-rose-50 hover:bg-rose-100 text-rose-700 px-3 py-1.5 rounded-lg text-xs font-semibold">❌ Erro</button>
+                        </div>
+                    </div>
+
+                    <!-- Reposição de Dados -->
+                    <div class="pt-2">
+                        <span class="block font-semibold text-slate-800 text-sm">Opções de Rastreabilidade</span>
+                        <p class="text-xs text-slate-400 mt-1 mb-4">Se desejar limpar todas as suas estatísticas, notas do caderno de estudos e cartões marcados como favoritos, utilize a opção abaixo.</p>
+                        <button onclick="resetAppProgress()" class="bg-rose-600 hover:bg-rose-500 text-white font-bold px-5 py-2.5 rounded-xl text-xs transition">
+                            Apagar Todo o Progresso
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Diretrizes CPC 16 para Consulta Rápida -->
+                <div class="bg-indigo-950 text-white p-6 rounded-2xl shadow-xl space-y-4">
+                    <h4 class="font-bold text-sm text-indigo-300 uppercase tracking-wider flex items-center">
+                        <span>📚</span> <span class="ml-2">Manual Rápido do CPC 16 (R1) - Estoques</span>
+                    </h4>
+                    <div class="space-y-3 text-xs leading-relaxed text-indigo-100">
+                        <p><strong class="text-white">Mensuração:</strong> Devem ser mensurados pelo menor valor entre o custo e o valor realizável líquido.</p>
+                        <p><strong class="text-white">Custo de Aquisição:</strong> Compreende o preço de compra, impostos de importação e outros impostos não recuperáveis, fretes, seguro e outros custos diretos. Impostos recuperáveis (ex: ICMS compensável) NÃO entram no custo.</p>
+                        <p><strong class="text-white">Juros:</strong> Operações com pagamento a prazo contêm juros implícitos. A diferença entre o preço à vista e a prazo deve ser reconhecida como despesa financeira (AVP) ao longo do tempo, e não entra no custo dos estoques.</p>
+                        <p><strong class="text-white">Valores Anormais:</strong> Desperdícios anormais de matéria-prima, mão de obra ou outros insumos são despesas imediatas, nunca custos de estoque.</p>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Script de Aplicação Principal: Dados, Lógica de Estado e Web Audio -->
+    <script>
+        // --- GERADOR DE ÁUDIO SINTETIZADO PREMIUM (Web Audio API) ---
+        const AudioSynth = {
+            ctx: null,
+            init() {
+                if (!this.ctx) {
+                    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+            },
+            playFlip() {
+                if (!document.getElementById('chk-audio').checked) return;
+                this.init();
+                if (!this.ctx) return;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.frequency.setValueAtTime(320, this.ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(80, this.ctx.currentTime + 0.12);
+                gain.gain.setValueAtTime(0.08, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.12);
+                osc.start();
+                osc.stop(this.ctx.currentTime + 0.12);
+            },
+            playSuccess() {
+                if (!document.getElementById('chk-audio').checked) return;
+                this.init();
+                if (!this.ctx) return;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(523.25, this.ctx.currentTime); // Nota Dó (C5)
+                osc.frequency.setValueAtTime(659.25, this.ctx.currentTime + 0.08); // Nota Mi (E5)
+                gain.gain.setValueAtTime(0.12, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.25);
+                osc.start();
+                osc.stop(this.ctx.currentTime + 0.25);
+            },
+            playError() {
+                if (!document.getElementById('chk-audio').checked) return;
+                this.init();
+                if (!this.ctx) return;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(160, this.ctx.currentTime);
+                osc.frequency.linearRampToValueAtTime(120, this.ctx.currentTime + 0.22);
+                gain.gain.setValueAtTime(0.1, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.22);
+                osc.start();
+                osc.stop(this.ctx.currentTime + 0.22);
+            }
+        };
+
+        // --- DADOS REAIS EXTRAÍDOS DO PDF DE CONCURSO (Estoques CPC 16) ---
+        const originalCardsData = [
+            {
+                id: 1,
+                banca: "CEBRASPE (CESPE)",
+                orgao: "TELEBRAS",
+                cargo: "Analista Finanças / 2026",
+                text: "Um custo que não seja de aquisição nem de transformação somente deve ser incluído nos custos dos estoques se tiver sido incorrido para colocar os referidos ativos no seu local e na sua condição atuais.",
+                answer: true,
+                explanation: "De acordo com o item 15 do CPC 16 (R1), 'outros custos somente devem ser incluídos nos custos dos estoques se forem incorridos para colocar os referidos ativos no seu local e na sua condição atuais'. Logo, custos logísticos adicionais que cumprem essa premissa integram o estoque."
+            },
+            {
+                id: 2,
+                banca: "CEBRASPE (CESPE)",
+                orgao: "STM",
+                cargo: "Contabilidade / 2025",
+                text: "Em uma revenda de automóveis, um critério adequado de avaliação de um item em estoque é o custo específico desse item.",
+                answer: true,
+                explanation: "Para itens de estoque que não são ordinariamente intercambiáveis e bens produzidos e segregados para projetos específicos (como veículos numa concessionária ou joias exclusivas), o CPC 16 (R1) determina a atribuição de custos por meio de identificação específica dos seus custos individuais."
+            },
+            {
+                id: 3,
+                banca: "CEBRASPE (CESPE)",
+                orgao: "STM",
+                cargo: "Contabilidade / 2025",
+                text: "As contas de estoque de uma entidade podem ser constituídas tanto por bens prontos destinados à venda como por bens em processo de fabricação ou insumos para a produção.",
+                answer: true,
+                explanation: "Conforme a definição de estoques do CPC 16 (item 6), os estoques englobam ativos mantidos para venda (bens prontos), em processo de produção para venda (em fabricação) ou na forma de materiais/suprimentos a serem consumidos no processo de produção (insumos)."
+            },
+            {
+                id: 4,
+                banca: "CEBRASPE (CESPE)",
+                orgao: "Polícia Federal (PF)",
+                cargo: "Contabilidade / 2025",
+                text: "A obsolescência pode ser um fator de desclassificação de um ativo como estoque.",
+                answer: true,
+                explanation: "Um estoque deve gerar benefícios económicos futuros. Se um item se torna obsoleto a ponto de perder totalmente o seu valor económico de realização ou utilidade operacional, ele deixa de cumprir a definição de ativo e deve sofrer baixa física ou redução integral ao valor realizável líquido."
+            },
+            {
+                id: 5,
+                banca: "QUADRIX",
+                orgao: "CRC SP",
+                cargo: "Contábil / 2025",
+                text: "De acordo com o CPC 16 (R1) – Estoques, os estoques devem ser mensurados pelo menor valor entre o custo e o valor realizável líquido.",
+                answer: true,
+                explanation: "Esta é a regra de ouro do CPC 16 (item 9): os estoques devem ser avaliados pelo menor valor entre o custo histórico de aquisição/produção e o valor realizável líquido (preço de venda estimado deduzido dos custos de conclusão e despesas de venda)."
+            },
+            {
+                id: 6,
+                banca: "Ibest",
+                orgao: "CRQ 13",
+                cargo: "Técnico em Contabilidade / 2024",
+                text: "O ciclo operacional da entidade é o tempo decorrido para converter entradas (inputs) em saídas (outputs). Quando o ciclo operacional normal da entidade não for claramente identificável, pressupõe-se que sua duração seja de doze meses.",
+                answer: true,
+                explanation: "Conformidade direta com o pronunciamento de apresentação das demonstrações contábeis. Na ausência de identificação clara do ciclo produtivo, adota-se o pressuposto regulamentar padrão de 12 meses."
+            },
+            {
+                id: 7,
+                banca: "QUADRIX",
+                orgao: "CREF 3",
+                cargo: "Contabilidade / 2023",
+                text: "Uma empresa adquire 150 bolsas pelo valor bruto de NF de R$ 11.340. Na operação incide IPI (8%) e ICMS (16%). O custo unitário das bolsas adquiridas equivale a R$ 64,40.",
+                answer: true,
+                explanation: "<strong>Cálculo Passo a Passo:</strong><br>1) Sendo uma empresa comercial, o IPI (8%) NÃO é recuperável e integra o custo. O ICMS (16%) É recuperável e deve ser deduzido.<br>2) Em notas comerciais normais de indústria para comércio, o IPI é calculado sobre o valor dos produtos.<br>• Produtos = R$ 10.500<br>• IPI (8%) = R$ 840<br>• Valor Total da Nota Fiscal = R$ 11.340 (R$ 10.500 + R$ 840)<br>3) O ICMS (16%) incide sobre os produtos (R$ 10.500) = R$ 1.680.<br>4) Custo do Estoque = Valor da Nota (R$ 11.340) - ICMS Recuperável (R$ 1.680) = R$ 9.660.<br>5) Custo Unitário = R$ 9.660 / 150 = R$ 64,40."
+            },
+            {
+                id: 8,
+                banca: "CEBRASPE (CESPE)",
+                orgao: "TJ ES",
+                cargo: "Auditoria / Contador / 2023",
+                text: "Os bens tangíveis mantidos para venda recorrente, em processo ou uso próprio, podem ter o custo de cada item valorado periodicamente pela média ponderada ou a cada lote recebido.",
+                answer: true,
+                explanation: "O CPC 16 permite o uso do custo médio ponderado para valorar os estoques. A média pode ser calculada em bases periódicas (custo médio ponderado periódico) ou de forma móvel, à medida que cada lote novo seja recebido (custo médio ponderado móvel)."
+            },
+            {
+                id: 9,
+                banca: "QUADRIX",
+                orgao: "CREFITO 7",
+                cargo: "Contábil / 2023",
+                text: "Na valoração de estoques pelo critério do custo médio ponderado, o custo de cada item é determinado a partir do custo no começo do período e dos itens comprados ou produzidos durante o período.",
+                answer: true,
+                explanation: "Esta é a definição matemática exata da valoração ponderada periódica, agregando o saldo inicial ao montante de novas entradas no intervalo de apuração."
+            },
+            {
+                id: 10,
+                banca: "CEBRASPE (CESPE)",
+                orgao: "TBG",
+                cargo: "Auditoria e Compliance / 2023",
+                text: "O procedimento contábil de redução do custo dos estoques ao seu valor realizável líquido é um indicativo de que o investimento efetuado nos referidos ativos pode não ser mais recuperável.",
+                answer: true,
+                explanation: "Correto. Reduzir o valor contábil ao valor de realização líquido é o reconhecimento direto de uma perda (impairment de estoque). Isso indica que os montantes aplicados na compra ou manufatura não serão integralmente recuperados pela venda futura."
+            },
+            {
+                id: 11,
+                banca: "CEBRASPE (CESPE)",
+                orgao: "TBG",
+                cargo: "Contábil / 2023",
+                text: "As entidades podem valer-se do valor de custo ou do valor realizável líquido para a avaliação dos seus estoques de mercadorias, devendo escolher, dos dois valores, o menor.",
+                answer: true,
+                explanation: "Mais uma questão reiterando o critério legal clássico. Trata-se do princípio contábil da prudência e do comando literal do CPC 16 sobre a regra de mensuração."
+            },
+            {
+                id: 12,
+                banca: "QUADRIX",
+                orgao: "CREA GO",
+                cargo: "Contador / 2023",
+                text: "No setor de varejo, o custo do estoque pode ser determinado pela redução do seu preço de venda na percentagem apropriada da margem bruta.",
+                answer: true,
+                explanation: "O CPC 16 (item 21) aceita técnicas de avaliação simplificadas se os resultados se aproximarem do custo real. No varejo, o 'método do retalho' é muito utilizado para precificar inventários de alta rotatividade com margens semelhantes."
+            },
+            {
+                id: 13,
+                banca: "QUADRIX",
+                orgao: "CRQ 4 (SP)",
+                cargo: "Contabilista / 2023",
+                text: "A companhia Cometa adquire 100 unidades da bolsa XYZ por R$ 11.000 (IPI de 10% e ICMS de 12% inclusos). Sendo o IPI não recuperável para ela, o custo total das mercadorias é de R$ 9.800.",
+                answer: true,
+                explanation: "<strong>Cálculo Passo a Passo:</strong><br>1) Preço total da NF = R$ 11.000.<br>2) Sendo o IPI de 10% e incluso no total, temos:<br>• Valor dos Produtos = R$ 10.000<br>• IPI = R$ 1.000<br>3) O ICMS (12%) incide sobre a operação normal de produtos = 12% de R$ 10.000 = R$ 1.200.<br>4) Como o ICMS é recuperável, deduzimos: R$ 11.000 (total da compra) - R$ 1.200 (ICMS a recuperar) = R$ 9.800 (Custo líquido do estoque). O IPI não recuperável fica incorporado no custo."
+            },
+            {
+                id: 14,
+                banca: "IADES",
+                orgao: "SEE DF",
+                cargo: "Professor Contabilidade / 2023",
+                text: "Os estoques compreendem bens adquiridos e destinados à venda, e também compreendem produtos acabados e produtos em processo de produção na entidade.",
+                answer: true,
+                explanation: "Assertiva conceitualmente impecável com base no CPC 16. Abrange tanto estoques comerciais (mercadorias compradas para revenda) quanto industriais (matérias-primas, produtos em elaboração e produtos acabados)."
+            },
+            {
+                id: 15,
+                banca: "IADES",
+                orgao: "SEE DF",
+                cargo: "Professor Contabilidade / 2023",
+                text: "O critério PEPS pressupõe que os itens de estoque que foram comprados ou produzidos primeiro sejam vendidos em primeiro lugar e, consequentemente, os itens que permanecerem em estoque no fim do período sejam os mais recentemente comprados ou produzidos.",
+                answer: true,
+                explanation: "Definição literal do método PEPS (Primeiro a Entrar, Primeiro a Sair). Em termos de fluxo de custos, as saídas debitam o custo dos lotes mais antigos e o estoque final fica valorado com base nas entradas mais recentes."
+            },
+            {
+                id: 16,
+                banca: "QUADRIX",
+                orgao: "SEE DF",
+                cargo: "Contabilidade / 2022",
+                text: "Os custos dos estoques compreendem, entre outros, o custo de conversão de matérias-primas em produtos acabados e os impostos não recuperáveis, mas não incluem os descontos financeiros sobre as compras.",
+                answer: true,
+                explanation: "Correto. Descontos financeiros (obtidos por liquidação rápida) representam receitas financeiras de natureza estritamente financeira do período e não reduzem o custo contábil original do estoque adquirido."
+            },
+            {
+                id: 17,
+                banca: "QUADRIX",
+                orgao: "CRMV SP",
+                cargo: "Contabilidade / 2022",
+                text: "Supondo-se que a aplicação em estoques assegure uma valorização em termos reais, é necessário cotejá-la com o custo de oportunidade associado à retenção ou à manutenção desses estoques.",
+                answer: true,
+                explanation: "Esta é uma perspetiva financeira. A decisão de reter stocks envolve o custo de armazenagem física e o custo de oportunidade do capital financeiro ali imobilizado, que poderia estar aplicado noutros investimentos."
+            },
+            {
+                id: 18,
+                banca: "QUADRIX",
+                orgao: "SEE DF",
+                cargo: "Contabilidade / 2021",
+                text: "Um indicador de transferência de controle de um ativo para efeito de reconhecimento de uma receita de vendas requer a capacidade, pelo cliente, de usufruir dos benefícios remanescentes desse ativo.",
+                answer: true,
+                explanation: "Em sintonia com a CPC 47 (Receita de Contrato com Cliente). O controlo é transferido se o comprador puder direcionar o uso do bem e obter substancialmente todos os seus benefícios."
+            },
+            {
+                id: 19,
+                banca: "CEBRASPE (CESPE)",
+                orgao: "SLU DF",
+                cargo: "Ciências Contábeis / 2019",
+                text: "O desconto obtido em razão do pagamento no prazo estipulado (desconto financeiro) não influencia no valor do estoque das mercadorias para revenda.",
+                answer: true,
+                explanation: "Correto. O desconto financeiro/condicional é uma receita financeira, não impactando o custo histórico de aquisição do estoque (que é afetado apenas por descontos incondicionais/comerciais obtidos no ato da compra)."
+            },
+            {
+                id: 20,
+                banca: "CEBRASPE (CESPE)",
+                orgao: "SLU DF",
+                cargo: "Ciências Contábeis / 2019",
+                text: "Uma empresa sem estoques compra mercadorias a prazo por R$ 30.000 e paga R$ 300 adiantados de frete. Sem vendas adicionais, após pagar o fornecedor com 2% de desconto financeiro, o estoque totaliza R$ 30.300.",
+                answer: true,
+                explanation: "<strong>Explicação Matemática:</strong><br>1) Custo de aquisição inicial = R$ 30.000 (preço da mercadoria) + R$ 300 (frete pago de transporte sob responsabilidade da adquirente) = R$ 30.300.<br>2) O desconto obtido de 2% no pagamento foi condicional (financeiro) por liquidação no prazo.<br>3) Como o desconto financeiro não altera a ficha do estoque, o valor do estoque permanece inalterado em R$ 30.300."
+            },
+            {
+                id: 21,
+                banca: "CEBRASPE (CESPE)",
+                orgao: "SLU DF",
+                cargo: "Ciências Contábeis / 2019",
+                text: "Se o desconto de 2% (sobre R$ 30.000) fosse obtido no momento da aquisição das mercadorias (desconto comercial), o estoque líquido inicial a ser registrado seria de R$ 29.700 (considerando o frete de R$ 300).",
+                answer: true,
+                explanation: "<strong>Cálculo:</strong><br>1) Preço nominal = R$ 30.000.<br>2) Desconto comercial (no ato da compra) = 2% de R$ 30.000 = R$ 600.<br>3) Valor de compra líquido = R$ 29.400.<br>4) Adicionando o frete ativável (R$ 300) = R$ 29.700. Descontos comerciais são sempre deduzidos no registo inicial."
+            },
+            {
+                id: 22,
+                banca: "CEBRASPE (CESPE)",
+                orgao: "SLU DF",
+                cargo: "Ciências Contábeis / 2019",
+                text: "O prazo de pagamento do frete (se pago no ato ou faturado para 30 dias posteriores) não altera a classificação de ativação da despesa de frete no custo do estoque.",
+                answer: true,
+                explanation: "Por força do regime de competência, se o frete de compra é de responsabilidade do comprador, ele é ativado no stock, independentemente de ser pago a pronto ou a prazo."
+            },
+            {
+                id: 23,
+                banca: "CEBRASPE (CESPE)",
+                orgao: "TJ AM",
+                cargo: "Contabilidade / 2019",
+                text: "Situação hipotética: Uma entidade comercial apresenta estoque inicial de R$ 1.000, compras líquidas de R$ 500 e estoque final de R$ 500. Assertiva: O custo da mercadoria vendida (CMV) é de R$ 1.000.",
+                answer: true,
+                explanation: "<strong>Cálculo Direto do CMV:</strong><br>• Fórmula: $CMV = EI + C - EF$<br>• Aplicando: $CMV = 1.000 + 500 - 500$<br>• Resultado: $CMV = 1.000$. Portanto, a assertiva está correta."
+            },
+            {
+                id: 24,
+                banca: "QUADRIX",
+                orgao: "CREA TO",
+                cargo: "Contabilidade / 2019",
+                text: "Se determinada empresa assumir os gastos com transporte e seguro das mercadorias que compra, tais despesas podem ser incluídas no custo de aquisição.",
+                answer: true,
+                explanation: "Os fretes e seguros incorridos para trazer as mercadorias até ao local de armazenamento são gastos necessários e, portanto, integram o custo de aquisição do ativo estoque."
+            },
+            {
+                id: 25,
+                banca: "QUADRIX",
+                orgao: "CRO AC",
+                cargo: "Financeiro / 2019",
+                text: "O custo de transporte de determinada mercadoria até o estabelecimento da empresa compradora deve ser incluído no custo das mercadorias adquiridas.",
+                answer: true,
+                explanation: "Reiteração da regra: se o transporte corre por conta da empresa compradora (FOB na origem), o valor do frete é agregado ao valor do estoque de compras."
+            },
+            {
+                id: 26,
+                banca: "QUADRIX",
+                orgao: "CRO AC",
+                cargo: "Financeiro / 2019",
+                text: "O valor realizável líquido de determinado estoque é o preço de venda estimado dos itens estocados no curso normal dos negócios, deduzido dos custos estimados para a conclusão desses negócios e dos gastos estimados necessários para se concretizar a venda.",
+                answer: true,
+                explanation: "Definição literal do item 6 do CPC 16 para 'Valor Realizável Líquido'. É o valor líquido que a entidade espera obter no mercado com a venda do stock, após deduzir os gastos para aprontá-lo e vendê-lo."
+            },
+            {
+                id: 27,
+                banca: "QUADRIX",
+                orgao: "CRO AC",
+                cargo: "Técnico em Contabilidade / 2019",
+                text: "Na aquisição de mercadorias destinadas à revenda, as empresas deverão registrar, na conta de compras, o valor da aquisição descontado dos tributos recuperáveis.",
+                answer: true,
+                explanation: "Correto. O valor líquido que fica debitado na ficha de estoques deve ser purgado dos impostos recuperáveis (compensáveis junto ao fisco), que são registados numa conta separada no Ativo Circulante (ex: Tributos a Recuperar)."
+            },
+            {
+                id: 28,
+                banca: "CEBRASPE (CESPE)",
+                orgao: "EBSERH",
+                cargo: "Contabilidade / 2018",
+                text: "A conta perdas estimadas por redução ao valor realizável líquido, componente do subgrupo estoques, tem natureza credora, apesar de figurar no ativo.",
+                answer: true,
+                explanation: "Esta conta é uma conta retificadora (redutora) do ativo circulante. Como todas as contas retificadoras de ativo, o seu saldo natural é credor, diminuindo o saldo de estoques brutas."
+            },
+            {
+                id: 29,
+                banca: "CEBRASPE (CESPE)",
+                orgao: "Polícia Federal (PF)",
+                cargo: "Contabilidade / 2018",
+                text: "A aquisição de mercadorias para revenda, quando classificável na conta estoques em trânsito, gerará uma contrapartida em conta de fornecedores ou de caixa e equivalentes.",
+                answer: true,
+                explanation: "Perfeito. Trata-se do registo clássico de aquisição. A conta 'Estoques em Trânsito' é debitada (Aumento de Ativo), gerando um crédito correspondente em 'Fornecedores' (Aumento de Passivo) ou 'Caixa' (Redução de Ativo)."
+            },
+            {
+                id: 30,
+                banca: "QUADRIX",
+                orgao: "CREF 8",
+                cargo: "Financeiro / 2018",
+                text: "A contabilização de uma baixa do estoque de mercadorias no sistema de inventário permanente pode ser efetuada mediante um lançamento de débito na conta CMV e crédito na conta Mercadorias.",
+                answer: true,
+                explanation: "Este é o lançamento padrão de baixa de estoque na venda: D - Custo das Mercadorias Vendidas (CMV - Resultado) e C - Mercadorias/Estoques (Ativo Circulante) para desativar os itens saídos."
+            },
+            {
+                id: 31,
+                banca: "QUADRIX",
+                orgao: "CREF 13",
+                cargo: "Contador / 2018",
+                text: "Quando o valor de mercado dos estoques de mercadorias for inferior ao seu custo de aquisição, o valor líquido realizável será apurado pela diferença entre o preço de venda e as despesas estimadas com a venda e o respectivo recebimento.",
+                answer: true,
+                explanation: "Perfeito. O cálculo do valor realizável líquido deduz todas as despesas comerciais associadas ao desinvestimento do item do estoque."
+            },
+            {
+                id: 32,
+                banca: "QUADRIX",
+                orgao: "CRECI 5 (GO)",
+                cargo: "Ciências Contábeis / 2018",
+                text: "Fretes sobre compras é conta patrimonial e fretes sobre vendas, de resultado.",
+                answer: true,
+                explanation: "Correto. O frete sobre compra integra o custo da mercadoria (conta de Ativo - Estoques), portanto, patrimonial. Já o frete sobre venda é um custo suportado para entregar o produto vendido ao cliente, logo, é uma despesa comercial (Resultado)."
+            },
+            {
+                id: 33,
+                banca: "CEBRASPE (CESPE)",
+                orgao: "MPU",
+                cargo: "Finanças e Controle / 2015",
+                text: "O valor de custo do estoque deve incluir todos os custos de aquisição e de transformação bem como outros custos incorridos para trazer os estoques à sua condição e à sua localização atuais.",
+                answer: true,
+                explanation: "Esta é a dicção literal e exaustiva das componentes de custos definida na estrutura conceitual do CPC 16 (R1), unindo materiais diretos, processamento e logística associada."
+            },
+            {
+                id: 34,
+                banca: "CEBRASPE (CESPE)",
+                orgao: "STJ",
+                cargo: "Contadoria / 2015",
+                text: "O imposto de importação e os impostos não recuperáveis junto ao fisco, diretamente atribuíveis à aquisição de mercadorias destinadas à revenda, devem compor o custo de aquisição desses estoques.",
+                answer: true,
+                explanation: "Correto. Como o comprador não poderá compensar tais impostos contra obrigações fiscais futuras, eles representam um sacrifício financeiro definitivo na transação e integram o custo do estoque adquirido."
+            },
+            {
+                id: 35,
+                banca: "CEBRASPE (CESPE)",
+                orgao: "STJ",
+                cargo: "Contadoria / 2015",
+                text: "Valores anormais de desperdício de matéria-prima não são considerados custos de estoques e devem ser reconhecidos como despesas do período em que ocorreu o desperdício.",
+                answer: true,
+                explanation: "Exclusão explícita no CPC 16 (item 16). Desperdícios anormais não agregam utilidade económica ao estoque e não podem ser ativados; devem ir diretamente para as despesas do exercício corrente."
+            },
+            {
+                id: 36,
+                banca: "CEBRASPE (CESPE)",
+                orgao: "STJ",
+                cargo: "Contadoria / 2015",
+                text: "Uma mercadoria comprada por R$ 7,00 tem em 31/7 um preço de reposição de R$ 7,80, preço de venda de R$ 12,50 e gastos de venda de R$ 1,50. Em 31/7/2015, o custo corrente unitário das mercadorias era R$ 7,80.",
+                answer: true,
+                explanation: "O custo corrente (preço de reposição) representa o custo que seria incorrido para adquirir ou produzir o mesmo ativo no momento atual. A questão confirma que o preço de reposição unitário alcançou o valor de R$ 7,80, que é a definição conceitual de custo corrente de entrada."
+            },
+            {
+                id: 37,
+                banca: "CEBRASPE (CESPE)",
+                orgao: "TC DF",
+                cargo: "Auditoria / 2014",
+                text: "A variação cambial sobre obrigações com fornecedores estrangeiros impacta o saldo da conta fornecedores, mas a mercadoria importada que continuar em estoque poderá não receber tal atualização.",
+                answer: true,
+                explanation: "O estoque é avaliado pelo custo histórico ou valor realizável líquido, o menor. A variação cambial após a data da compra (desembaraço) é classificada como variação monetária passiva de natureza puramente financeira (Passivo), e não altera o valor de custo de aquisição registado para as mercadorias em estoque."
+            },
+            {
+                id: 38,
+                banca: "CEBRASPE (CESPE)",
+                orgao: "TC DF",
+                cargo: "Auditoria / 2014",
+                text: "Um item de estoque registado por R$ 100,00 tem custos de venda de R$ 8,00 e preço de venda de R$ 90,00. O valor realizável líquido deve ser ajustado, gerando impacto negativo no resultado.",
+                answer: true,
+                explanation: "<strong>Cálculo:</strong><br>• Custo = R$ 100,00<br>• Valor Realizável Líquido = Preço de Venda ($90,00$) - Gastos ($8,00$) = R$ 82,00.<br>Sendo o valor realizável líquido (R$ 82) menor que o custo (R$ 100), a empresa deve ajustar o ativo, baixando o estoque em R$ 18,00. Esse lançamento gera um débito na despesa (Resultado) e crédito em conta redutora de estoque, com impacto negativo no resultado."
+            },
+            {
+                id: 39,
+                banca: "CEBRASPE (CESPE)",
+                orgao: "CADE",
+                cargo: "Contabilidade / 2014",
+                text: "Análise PEPS: EI de 10 unid a R$ 12; compra de 8 USD a USD 5 cada (dólar a R$ 2,50); venda de 12 unid a R$ 30; compra de 14 unid a R$ 16; venda de 10 unid a R$ 28. O lucro bruto do dia 16/1 foi de R$ 141,00.",
+                answer: true,
+                explanation: "<strong>Cálculo Detalhado do Fluxo PEPS:</strong><br>1) 01/01 - EI: 10 unidades x R$ 12,00 = R$ 120,00.<br>2) 05/01 - Compra: 8 unidades x USD 5,00 = USD 40,00. Dólar cotado a R$ 2,50.<br>• Custo em R$ = USD 40,00 x R$ 2,50 = R$ 100,00 (unitário de R$ 12,50).<br>3) 10/01 - Venda: 12 unidades. Pelo método PEPS saem:<br>• 10 unidades do estoque inicial (R$ 12,00 cada) = R$ 120,00.<br>• 2 unidades da compra de 05/01 (R$ 12,50 cada) = R$ 25,00.<br>• Restam no estoque: 6 unidades da compra de 05/01 (R$ 12,50 cada).<br>4) 13/01 - Compra: 14 unidades x R$ 16,00 = R$ 224,00.<br>5) 16/01 - Venda: 10 unidades. Saem (PEPS):<br>• As 6 unidades restantes de 05/01 (R$ 12,50 cada) = R$ 75,00.<br>• 4 unidades da compra de 13/01 (R$ 16,00 cada) = R$ 64,00.<br>• CMV do dia 16/1 = R$ 75,00 + R$ 64,00 = R$ 139,00.<br>• Receita bruta do dia 16/1 = 10 unidades x R$ 28,00 = R$ 280,00.<br>• Lucro Bruto do dia 16/1 = Receita ($280,00$) - CMV ($139,00$) = R$ 141,00."
+            },
+            {
+                id: 40,
+                banca: "CEBRASPE (CESPE)",
+                orgao: "Polícia Federal (PF)",
+                cargo: "Contabilidade / 2014",
+                text: "Uma empresa comercial adquire, a prazo, mercadorias cujo preço à vista era R$ 200.000, comprometendo-se a pagar R$ 210.000. A diferença de R$ 10.000 deve ser apropriada como despesa financeira pelo regime de competência no tempo do financiamento.",
+                answer: true,
+                explanation: "O estoque deve ser registado pelo seu valor equivalente à vista (R$ 200.000). A diferença de R$ 10.000 corresponde a juros implícitos do financiamento do fornecedor e deve ser diferida na conta de Ajuste a Valor Presente (AVP) para ser amortizada como despesa de juros ao longo do prazo da compra."
+            }
+        ];
+
+        // --- SISTEMA DE ESTADO REATIVO ---
+        let appState = {
+            cards: [],
+            currentCardIndex: 0,
+            isFlipped: false,
+            view: 'dashboard', // dashboard, study, deck, settings
+            studyMode: 'flashcard', // flashcard, quiz
+            deckFilter: 'all', // all, starred, completed, pending
+            deckSearch: '',
+            streak: 0,
+            quizAnswered: false,
+            selectedQuizAnswer: null
+        };
+
+        // --- INICIALIZADOR DA APLICAÇÃO ---
+        window.onload = function() {
+            loadUserData();
+            applyDeckFilters();
+            renderDashboard();
+            updateNavigationHighlight();
+            
+            // Ouvinte de teclado para o Cartão de Estudo (Praticidade extrema)
+            document.addEventListener('keydown', function(e) {
+                if (appState.view === 'study') {
+                    if (e.code === 'Space') {
+                        e.preventDefault();
+                        flipCurrentCard();
+                    } else if (e.code === 'ArrowRight') {
+                        nextCard();
+                    } else if (e.code === 'ArrowLeft') {
+                        prevCard();
+                    }
+                }
+            });
+        };
+
+        // --- CARREGAR DADOS DO NAVIGATOR (LocalStorage) ---
+        function loadUserData() {
+            const savedCards = localStorage.getItem('estoques_flashcards_user_data');
+            const savedStreak = localStorage.getItem('estoques_streak');
+            
+            if (savedCards) {
+                appState.cards = JSON.parse(savedCards);
+                // Validação de correspondência de dados de segurança se mudarmos o array inicial
+                if (appState.cards.length !== originalCardsData.length) {
+                    resetToDefaultData();
+                }
+            } else {
+                resetToDefaultData();
+            }
+
+            appState.streak = savedStreak ? parseInt(savedStreak) : 1;
+            document.getElementById('study-streak').textContent = appState.streak + ' dias';
+        }
+
+        function resetToDefaultData() {
+            appState.cards = originalCardsData.map(c => ({
+                ...c,
+                starred: false,
+                studied: false,
+                learned: false,
+                quizTries: 0,
+                quizSuccesses: 0,
+                userNote: ""
+            }));
+            saveToStorage();
+        }
+
+        function saveToStorage() {
+            localStorage.setItem('estoques_flashcards_user_data', JSON.stringify(appState.cards));
+            localStorage.setItem('estoques_streak', appState.streak.toString());
+        }
+
+        // --- CONTROLO DE VISTAS (VIEWS) ---
+        function changeView(viewName) {
+            appState.view = viewName;
+            
+            // Ocultar todas as secções
+            document.getElementById('view-dashboard').classList.add('hidden');
+            document.getElementById('view-study').classList.add('hidden');
+            document.getElementById('view-deck').classList.add('hidden');
+            document.getElementById('view-settings').classList.add('hidden');
+            
+            // Mostrar a secção ativa
+            document.getElementById(`view-${viewName}`).classList.remove('hidden');
+            
+            updateNavigationHighlight();
+
+            if (viewName === 'study') {
+                loadStudyCard();
+            } else if (viewName === 'dashboard') {
+                renderDashboard();
+            } else if (viewName === 'deck') {
+                applyDeckFilters();
+            }
+        }
+
+        function updateNavigationHighlight() {
+            const views = ['dashboard', 'study', 'deck', 'settings'];
+            views.forEach(v => {
+                const btn = document.getElementById(`nav-${v}`);
+                if (v === appState.view) {
+                    btn.classList.add('bg-indigo-600', 'text-white');
+                    btn.classList.remove('text-slate-300', 'hover:bg-slate-800');
+                } else {
+                    btn.classList.remove('bg-indigo-600', 'text-white');
+                    btn.classList.add('text-slate-300', 'hover:bg-slate-800');
+                }
+            });
+        }
+
+        // --- SISTEMA DO MODO DE ESTUDO (FLIP ENGINE) ---
+        function setStudyMode(mode) {
+            appState.studyMode = mode;
+            AudioSynth.playFlip();
+
+            const fcBtn = document.getElementById('btn-mode-flashcard');
+            const qzBtn = document.getElementById('btn-mode-quiz');
+            const fcCtrl = document.getElementById('flashcard-controls');
+            const qzCtrl = document.getElementById('quiz-controls');
+
+            if (mode === 'flashcard') {
+                fcBtn.classList.add('bg-white', 'text-indigo-900', 'shadow-sm');
+                fcBtn.classList.remove('text-slate-500');
+                qzBtn.classList.remove('bg-white', 'text-indigo-900', 'shadow-sm');
+                qzBtn.classList.add('text-slate-500');
+                
+                fcCtrl.classList.remove('hidden');
+                qzCtrl.classList.add('hidden');
+            } else {
+                qzBtn.classList.add('bg-white', 'text-indigo-900', 'shadow-sm');
+                qzBtn.classList.remove('text-slate-500');
+                fcBtn.classList.remove('bg-white', 'text-indigo-900', 'shadow-sm');
+                fcBtn.classList.add('text-slate-500');
+                
+                fcCtrl.classList.add('hidden');
+                qzCtrl.classList.remove('hidden');
+            }
+            
+            // Resetar o estado do quiz ao mudar de modo
+            appState.quizAnswered = false;
+            appState.selectedQuizAnswer = null;
+            resetCardRotation();
+        }
+
+        function loadStudyCard() {
+            if (appState.cards.length === 0) return;
+            const card = appState.cards[appState.currentCardIndex];
+            
+            resetCardRotation();
+
+            // Definir dados do lado frontal
+            document.getElementById('card-front-banca').textContent = card.banca;
+            document.getElementById('card-front-year').textContent = card.cargo;
+            document.getElementById('card-front-text').innerHTML = card.text;
+            document.getElementById('card-front-title').textContent = `Questão ${card.id} de Concurso`;
+            
+            // Definir dados do lado traseiro
+            document.getElementById('card-back-banca').textContent = `${card.banca} • ID: #${card.id}`;
+            document.getElementById('card-back-explanation').innerHTML = card.explanation;
+
+            // Notas do utilizador reativas
+            document.getElementById('card-user-notes').value = card.userNote || "";
+
+            // Atualizar badge de progresso
+            document.getElementById('study-progress-badge').textContent = `Cartão ${appState.currentCardIndex + 1} de ${appState.cards.length}`;
+
+            // Atualizar estrela do card
+            const starBtn = document.getElementById('btn-star-card');
+            if (card.starred) {
+                starBtn.textContent = '★';
+                starBtn.classList.remove('text-slate-300');
+                starBtn.classList.add('text-amber-400');
+            } else {
+                starBtn.textContent = '☆';
+                starBtn.classList.remove('text-amber-400');
+                starBtn.classList.add('text-slate-300');
+            }
+
+            // Ativar modo selecionado
+            setStudyMode(appState.studyMode);
+        }
+
+        function flipCurrentCard() {
+            AudioSynth.playFlip();
+            const inner = document.getElementById('study-card-inner');
+            if (appState.isFlipped) {
+                inner.classList.remove('rotate-y-180');
+                appState.isFlipped = false;
+            } else {
+                inner.classList.add('rotate-y-180');
+                appState.isFlipped = true;
+            }
+        }
+
+        function resetCardRotation() {
+            const inner = document.getElementById('study-card-inner');
+            inner.classList.remove('rotate-y-180');
+            appState.isFlipped = false;
+        }
+
+        function prevCard() {
+            if (appState.currentCardIndex > 0) {
+                appState.currentCardIndex--;
+                loadStudyCard();
+            } else {
+                showToast("Primeiro cartão alcançado!", "ℹ️");
+            }
+        }
+
+        function nextCard() {
+            if (appState.currentCardIndex < appState.cards.length - 1) {
+                appState.currentCardIndex++;
+                loadStudyCard();
+            } else {
+                showToast("Fim do baralho! Parabéns por rever todos os cartões.", "🎉");
+            }
+        }
+
+        // --- GERENCIAR FAVORITOS (STARS) ---
+        function toggleStarCurrentCard() {
+            const card = appState.cards[appState.currentCardIndex];
+            card.starred = !card.starred;
+            saveToStorage();
+            
+            const starBtn = document.getElementById('btn-star-card');
+            if (card.starred) {
+                starBtn.textContent = '★';
+                starBtn.classList.remove('text-slate-300');
+                starBtn.classList.add('text-amber-400');
+                showToast("Cartão adicionado aos favoritos!", "⭐");
+            } else {
+                starBtn.textContent = '☆';
+                starBtn.classList.remove('text-amber-400');
+                starBtn.classList.add('text-slate-300');
+                showToast("Cartão removido dos favoritos.", "🗑️");
+            }
+        }
+
+        // --- CADERNO DE NOTAS REATIVO ---
+        function saveCurrentCardNote() {
+            const text = document.getElementById('card-user-notes').value;
+            appState.cards[appState.currentCardIndex].userNote = text;
+            saveToStorage();
+        }
+
+        // --- SUBMISSÕES: FLASHCARD TRADICIONAL ---
+        function gradeFlashcard(success) {
+            const card = appState.cards[appState.currentCardIndex];
+            card.studied = true;
+            if (success) {
+                card.learned = true;
+                AudioSynth.playSuccess();
+                showToast("Ótimo! Cartão marcado como decorado.", "✔️");
+            } else {
+                card.learned = false;
+                AudioSynth.playError();
+                showToast("Cartão marcado para revisão imediata.", "⚠️");
+            }
+            saveToStorage();
+            
+            // Rodar cartão para ver explicação didática
+            if (!appState.isFlipped) {
+                flipCurrentCard();
+            }
+        }
+
+        // --- SUBMISSÕES: EXAME CERTO/ERRADO ---
+        function submitQuizAnswer(userGuess) {
+            if (appState.quizAnswered) {
+                showToast("Já respondeu a este cartão. Avance para o seguinte.", "ℹ️");
+                return;
+            }
+
+            const card = appState.cards[appState.currentCardIndex];
+            card.studied = true;
+            card.quizTries = (card.quizTries || 0) + 1;
+            
+            appState.quizAnswered = true;
+            appState.selectedQuizAnswer = userGuess;
+
+            // No nosso banco de dados real do PDF, TODOS os gabaritos são "true" (Certo).
+            // Logo, o gabarito real da questão é sempre "true".
+            const isCorrect = (userGuess === true); 
+
+            if (isCorrect) {
+                card.quizSuccesses = (card.quizSuccesses || 0) + 1;
+                card.learned = true;
+                AudioSynth.playSuccess();
+                showToast("Acertou! Excelente análise técnica.", "🎯");
+            } else {
+                card.learned = false;
+                AudioSynth.playError();
+                showToast("Resposta incorreta. Analise a explicação didática.", "❌");
+            }
+
+            saveToStorage();
+
+            // Forçar flip para mostrar fundamentação após resposta do quiz
+            setTimeout(() => {
+                if (!appState.isFlipped) {
+                    flipCurrentCard();
+                }
+            }, 500);
+        }
+
+        // --- PAINEL DE CONTROLO / STATS ENGINE (DASHBOARD) ---
+        function renderDashboard() {
+            const total = appState.cards.length;
+            const studied = appState.cards.filter(c => c.studied).length;
+            const learned = appState.cards.filter(c => c.learned).length;
+            const starred = appState.cards.filter(c => c.starred).length;
+
+            // Calcular precisão do modo Quiz
+            let totalQuizTries = 0;
+            let totalQuizSuccesses = 0;
+            appState.cards.forEach(c => {
+                totalQuizTries += (c.quizTries || 0);
+                totalQuizSuccesses += (c.quizSuccesses || 0);
+            });
+
+            const accuracy = totalQuizTries > 0 ? Math.round((totalQuizSuccesses / totalQuizTries) * 100) : 0;
+            const studyPercent = total > 0 ? Math.round((studied / total) * 100) : 0;
+            const learnedPercent = total > 0 ? Math.round((learned / total) * 100) : 0;
+
+            // Renderizar elementos textuais simples
+            document.getElementById('stat-studied').textContent = `${studied} / ${total}`;
+            document.getElementById('stat-percent-completed').textContent = `${studyPercent}% do baralho estudado`;
+            document.getElementById('stat-accuracy').textContent = `${accuracy}%`;
+            document.getElementById('stat-starred').textContent = starred.toString();
+            document.getElementById('stat-learned').textContent = learned.toString();
+            document.getElementById('stat-learned-percent').textContent = `${learnedPercent}% de retenção ativa`;
+            document.getElementById('overall-success').textContent = `${accuracy}%`;
+
+            // Atualizar o gráfico de rosca circular SVG
+            const circle = document.getElementById('svg-progress-circle');
+            circle.setAttribute('stroke-dasharray', `${studyPercent}, 100`);
+            document.getElementById('progress-circle-text').textContent = `${studyPercent}%`;
+            document.getElementById('lbl-circle-completed').textContent = `Estudado: ${studied}`;
+            document.getElementById('lbl-circle-pending').textContent = `Pendente: ${total - studied}`;
+
+            // Renderizar Desempenho por Banca Examinadora
+            renderBancaBreakdown();
+
+            // Renderizar Tabela de Cartões Favoritos
+            renderStarredTable();
+        }
+
+        function renderBancaBreakdown() {
+            // Agrupar dados por banca examinadora
+            const bancas = {};
+            appState.cards.forEach(c => {
+                if (!bancas[c.banca]) {
+                    bancas[c.banca] = { total: 0, studied: 0, successes: 0, tries: 0 };
+                }
+                bancas[c.banca].total++;
+                if (c.studied) bancas[c.banca].studied++;
+                bancas[c.banca].tries += (c.quizTries || 0);
+                bancas[c.banca].successes += (c.quizSuccesses || 0);
+            });
+
+            const container = document.getElementById('board-breakdown-container');
+            container.innerHTML = "";
+
+            Object.keys(bancas).forEach(name => {
+                const b = bancas[name];
+                const pctStudied = Math.round((b.studied / b.total) * 100);
+                const pctAccuracy = b.tries > 0 ? Math.round((b.successes / b.tries) * 100) : 0;
+
+                const cardHtml = `
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-center text-xs">
+                            <span class="font-bold text-slate-700">${name}</span>
+                            <span class="text-slate-400 font-semibold">${b.studied}/${b.total} Revistos (${pctAccuracy}% acertos)</span>
+                        </div>
+                        <div class="w-full bg-slate-100 rounded-full h-3 overflow-hidden flex">
+                            <!-- Barra de progresso do estudo -->
+                            <div class="bg-indigo-600 h-full rounded-l-full transition-all duration-500" style="width: ${pctStudied}%"></div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += cardHtml;
+            });
+        }
+
+        function renderStarredTable() {
+            const tableBody = document.getElementById('starred-table-body');
+            const emptyState = document.getElementById('starred-empty-state');
+            
+            const starredCards = appState.cards.filter(c => c.starred);
+
+            tableBody.innerHTML = "";
+
+            if (starredCards.length === 0) {
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+
+            starredCards.forEach(c => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50/50 transition cursor-pointer";
+                tr.onclick = () => {
+                    appState.currentCardIndex = appState.cards.findIndex(card => card.id === c.id);
+                    changeView('study');
+                };
+
+                tr.innerHTML = `
+                    <td class="py-3 px-4 font-bold text-indigo-600">#${c.id}</td>
+                    <td class="py-3 px-4 text-xs font-semibold">${c.banca}<br><span class="text-[10px] text-slate-400">${c.cargo}</span></td>
+                    <td class="py-3 px-4 text-xs max-w-xs truncate">${c.text}</td>
+                    <td class="py-3 px-4">
+                        <span class="bg-emerald-50 text-emerald-700 text-[10px] font-extrabold px-2 py-0.5 rounded-full">Certo</span>
+                    </td>
+                    <td class="py-3 px-4 text-right" onclick="event.stopPropagation()">
+                        <button onclick="unstarFromTable(${c.id})" class="text-rose-600 hover:text-rose-800 font-bold text-xs">Remover ❌</button>
+                    </td>
+                `;
+                tableBody.appendChild(tr);
+            });
+        }
+
+        function unstarFromTable(id) {
+            const card = appState.cards.find(c => c.id === id);
+            if (card) {
+                card.starred = false;
+                saveToStorage();
+                renderDashboard();
+                showToast("Favorito removido com sucesso.", "🗑️");
+            }
+        }
+
+        // --- EXPLORADOR DE BARALHO (DECK VIEWER) ---
+        function setDeckFilter(filterType) {
+            appState.deckFilter = filterType;
+            
+            const filters = ['all', 'starred', 'completed', 'pending'];
+            filters.forEach(f => {
+                const btn = document.getElementById(`btn-filter-${f}`);
+                if (f === filterType) {
+                    btn.className = "px-4 py-2 rounded-xl text-xs font-bold transition bg-indigo-600 text-white shadow-md";
+                } else {
+                    btn.className = "px-4 py-2 rounded-xl text-xs font-bold transition bg-slate-100 text-slate-600 hover:bg-slate-200";
+                }
+            });
+
+            applyDeckFilters();
+        }
+
+        function applyDeckFilters() {
+            const query = document.getElementById('deck-search-input').value.toLowerCase();
+            const grid = document.getElementById('deck-cards-grid');
+            grid.innerHTML = "";
+
+            let filtered = appState.cards;
+
+            // Filtro por Estado de Estudo
+            if (appState.deckFilter === 'starred') {
+                filtered = filtered.filter(c => c.starred);
+            } else if (appState.deckFilter === 'completed') {
+                filtered = filtered.filter(c => c.studied);
+            } else if (appState.deckFilter === 'pending') {
+                filtered = filtered.filter(c => !c.studied);
+            }
+
+            // Filtro por termo de pesquisa
+            if (query.trim() !== "") {
+                filtered = filtered.filter(c => c.text.toLowerCase().includes(query) || c.banca.toLowerCase().includes(query));
+            }
+
+            document.getElementById('deck-filtered-count').textContent = filtered.length.toString();
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full text-center py-12 text-slate-400">
+                        <span class="text-3xl">🔍</span>
+                        <p class="mt-2 text-xs">Nenhum cartão corresponde aos filtros aplicados.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            filtered.forEach(c => {
+                const cardElement = document.createElement('div');
+                cardElement.className = "bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex flex-col justify-between hover:shadow-md transition duration-300 cursor-pointer";
+                cardElement.onclick = () => {
+                    appState.currentCardIndex = appState.cards.findIndex(card => card.id === c.id);
+                    changeView('study');
+                };
+
+                cardElement.innerHTML = `
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-start">
+                            <span class="bg-indigo-50 text-indigo-700 text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full tracking-wider">${c.banca}</span>
+                            <span class="text-xs text-slate-300 font-bold">#${c.id}</span>
+                        </div>
+                        <p class="text-slate-700 text-xs font-medium leading-relaxed line-clamp-4">${c.text}</p>
+                    </div>
+                    <div class="flex justify-between items-center pt-4 mt-4 border-t border-slate-100 text-[10px]">
+                        <span class="text-slate-400 font-bold">${c.studied ? '✔️ Revisto' : '⌛ Pendente'}</span>
+                        <button onclick="event.stopPropagation(); toggleStarFromDeck(${c.id})" class="text-lg text-amber-400 hover:scale-115 transition">
+                            ${c.starred ? '★' : '☆'}
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(cardElement);
+            });
+        }
+
+        function toggleStarFromDeck(id) {
+            const card = appState.cards.find(c => c.id === id);
+            if (card) {
+                card.starred = !card.starred;
+                saveToStorage();
+                applyDeckFilters();
+                AudioSynth.playFlip();
+                showToast(card.starred ? "Favoritado!" : "Removido dos favoritos.", "⭐");
+            }
+        }
+
+        // --- REINICIAR CONTA / PROGRESSO ---
+        function resetAppProgress() {
+            if (confirm("Tens a certeza que desejas repor todo o teu progresso de estudos, favoritos e caderno de notas? Esta ação não pode ser desfeita.")) {
+                resetToDefaultData();
+                appState.streak = 1;
+                saveToStorage();
+                renderDashboard();
+                showToast("Todo o progresso foi limpo com sucesso!", "💥");
+                changeView('dashboard');
+            }
+        }
+
+        // --- MOTOR DE POPUPS AUTOMÁTICO (TOASTS) ---
+        function showToast(message, icon = "🔔") {
+            const toast = document.getElementById('toast');
+            const toastText = document.getElementById('toast-text');
+            const toastIcon = document.getElementById('toast-icon');
+
+            toastText.innerHTML = message;
+            toastIcon.textContent = icon;
+
+            // Animación de entrada
+            toast.classList.remove('translate-y-10', 'opacity-0', 'pointer-events-none');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            // Retorno após delay
+            setTimeout(() => {
+                toast.classList.add('translate-y-10', 'opacity-0', 'pointer-events-none');
+                toast.classList.remove('translate-y-0', 'opacity-100');
+            }, 3000);
+        }
+    </script>
+
+</body>
+</html>
