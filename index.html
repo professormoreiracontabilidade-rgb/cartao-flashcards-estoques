@@ -1,398 +1,93 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Flashcards CPC 16 - Curso de Contabilidade Professor Moreira</title>
-  <style>
-    :root{
-      --azul-900:#0F172A;
-      --azul-800:#1E293B;
-      --azul-700:#1D4ED8;
-      --azul-600:#2563EB;
-      --azul-100:#DBEAFE;
-      --branco:#FFFFFF;
-      --cinza-50:#F8FAFC;
-      --cinza-200:#E2E8F0;
-      --texto:#F8FAFC;
-      --texto2:#CBD5E1;
-      --verde:#22C55E;
-      --vermelho:#EF4444;
-      --amarelo:#FBBF24;
-      --sombra:0 18px 45px rgba(0,0,0,.35);
-    }
-
-    *{box-sizing:border-box;margin:0;padding:0}
-    html,body{min-height:100%;font-family:Arial, Helvetica, sans-serif;background:linear-gradient(160deg,var(--azul-900),#111827 55%,#172554);color:var(--texto)}
-    body{padding:86px 12px 78px;overflow-x:hidden}
-
-    header{
-      position:fixed;top:0;left:0;right:0;z-index:50;
-      background:rgba(15,23,42,.96);backdrop-filter:blur(10px);
-      border-bottom:1px solid rgba(219,234,254,.18);
-      padding:12px 10px;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.28)
-    }
-    header h1{font-size:18px;line-height:1.2;font-weight:900;letter-spacing:.4px;color:#fff;text-transform:uppercase}
-    header p{font-size:13px;margin-top:4px;color:var(--azul-100);font-weight:700}
-
-    .app{max-width:480px;margin:0 auto;width:100%}
-
-    .stats{
-      display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;
-      animation:fade .45s ease
-    }
-    .stat{
-      background:rgba(255,255,255,.08);border:1px solid rgba(219,234,254,.18);
-      border-radius:18px;padding:10px;text-align:center;box-shadow:0 8px 20px rgba(0,0,0,.18)
-    }
-    .stat span{display:block;font-size:12px;color:var(--texto2);font-weight:700;margin-bottom:4px}
-    .stat strong{font-size:19px;color:#fff}
-
-    .progress-wrap{
-      background:rgba(255,255,255,.08);border:1px solid rgba(219,234,254,.18);
-      border-radius:20px;padding:12px;margin-bottom:14px
-    }
-    .progress-line{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;font-size:14px;font-weight:800;color:var(--azul-100)}
-    .progress-bg{height:12px;background:rgba(219,234,254,.2);border-radius:99px;overflow:hidden}
-    .progress-bar{height:100%;width:0%;background:linear-gradient(90deg,#60A5FA,#DBEAFE);border-radius:99px;transition:.4s}
-
-    .modebar{display:flex;gap:8px;margin-bottom:14px}
-    .modebar button{flex:1;border:none;border-radius:16px;padding:12px 10px;font-size:15px;font-weight:900;cursor:pointer;color:#fff;background:rgba(255,255,255,.10);border:1px solid rgba(219,234,254,.18)}
-    .modebar button.active{background:var(--azul-600);box-shadow:0 8px 22px rgba(37,99,235,.35)}
-
-    .card-zone{perspective:1200px;margin:0 auto 14px;width:100%;min-height:490px}
-    .flashcard{position:relative;width:100%;height:490px;transform-style:preserve-3d;transition:transform .55s ease;cursor:pointer}
-    .flashcard.flipped{transform:rotateY(180deg)}
-    .face{
-      position:absolute;inset:0;backface-visibility:hidden;border-radius:28px;padding:24px 18px;
-      display:flex;flex-direction:column;justify-content:space-between;box-shadow:var(--sombra);overflow:hidden;
-      border:2px solid rgba(219,234,254,.24)
-    }
-    .front{background:linear-gradient(150deg,#1E3A8A,#0F172A 70%)}
-    .back{background:linear-gradient(150deg,#0F172A,#1E293B 75%);transform:rotateY(180deg)}
-    .tagrow{display:flex;justify-content:space-between;gap:8px;align-items:center}
-    .tag{font-size:12px;font-weight:900;background:rgba(219,234,254,.16);border:1px solid rgba(219,234,254,.22);padding:8px 10px;border-radius:99px;color:#DBEAFE}
-    .star{font-size:30px;line-height:1;background:transparent;border:none;color:rgba(255,255,255,.45);cursor:pointer;padding:4px}
-    .star.on{color:var(--amarelo);text-shadow:0 0 15px rgba(251,191,36,.55)}
-    .question-wrap,.answer-wrap{overflow-y:auto;padding:6px 2px;scrollbar-width:thin}
-    .label{text-align:center;color:#93C5FD;font-size:16px;font-weight:900;margin-bottom:12px;letter-spacing:.8px}
-    .question{font-size:29px;line-height:1.26;font-weight:900;text-align:center;color:#fff}
-    .answer-title{font-size:26px;font-weight:900;color:#fff;text-align:center;margin-bottom:12px}
-    .answer{font-size:24px;line-height:1.32;font-weight:900;color:#DBEAFE;text-align:center;margin-bottom:16px}
-    .explain{font-size:22px;line-height:1.36;color:#F8FAFC;text-align:left;background:rgba(255,255,255,.08);border:1px solid rgba(219,234,254,.16);border-radius:18px;padding:14px;margin-bottom:12px}
-    .tip,.trap{font-size:20px;line-height:1.35;color:#fff;border-radius:18px;padding:12px;margin-top:10px}
-    .tip{background:rgba(34,197,94,.18);border:1px solid rgba(34,197,94,.35)}
-    .trap{background:rgba(239,68,68,.18);border:1px solid rgba(239,68,68,.35)}
-    .tap{font-size:14px;color:var(--texto2);text-align:center;font-weight:800;margin-top:12px}
-
-    .quiz-result{display:none;margin-bottom:12px;text-align:center;border-radius:18px;padding:12px;font-size:20px;font-weight:900}
-    .quiz-result.ok{display:block;background:rgba(34,197,94,.18);border:1px solid rgba(34,197,94,.38);color:#BBF7D0}
-    .quiz-result.no{display:block;background:rgba(239,68,68,.18);border:1px solid rgba(239,68,68,.38);color:#FECACA}
-
-    .quiz-buttons,.nav-buttons,.extra-buttons{display:grid;gap:10px;margin-bottom:12px}
-    .quiz-buttons{grid-template-columns:1fr 1fr;display:none}
-    .quiz-buttons.show{display:grid}
-    .nav-buttons{grid-template-columns:1fr 1fr}
-    .extra-buttons{grid-template-columns:1fr 1fr}
-    button.btn{
-      border:none;border-radius:18px;padding:15px 10px;font-size:18px;font-weight:900;cursor:pointer;color:#fff;
-      background:linear-gradient(135deg,var(--azul-600),var(--azul-700));
-      box-shadow:0 10px 22px rgba(37,99,235,.25);transition:.2s
-    }
-    button.btn:active{transform:scale(.97)}
-    button.btn.secondary{background:rgba(255,255,255,.10);border:1px solid rgba(219,234,254,.22);box-shadow:none}
-    button.btn.good{background:linear-gradient(135deg,#16A34A,#22C55E)}
-    button.btn.bad{background:linear-gradient(135deg,#DC2626,#EF4444)}
-    button.btn.gold{background:linear-gradient(135deg,#D97706,#FBBF24);color:#111827}
-
-    .deck-menu{background:rgba(255,255,255,.08);border:1px solid rgba(219,234,254,.18);border-radius:22px;padding:12px;margin:12px 0 18px;display:none}
-    .deck-menu.show{display:block}
-    .deck-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
-    .deck-grid button{border:none;border-radius:12px;padding:10px 0;font-weight:900;color:#fff;background:rgba(219,234,254,.14)}
-    .deck-grid button.current{background:var(--azul-600)}
-    .deck-grid button.done{background:#16A34A}
-    .deck-grid button.fav{outline:2px solid var(--amarelo)}
-
-    footer{
-      position:fixed;bottom:0;left:0;right:0;z-index:50;background:rgba(15,23,42,.96);
-      border-top:1px solid rgba(219,234,254,.18);text-align:center;padding:10px 8px;color:#DBEAFE;font-size:13px;font-weight:800
-    }
-    footer small{display:block;color:#CBD5E1;margin-top:2px;font-size:12px}
-
-    @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-    .fade{animation:fade .35s ease}
-
-    @media(max-width:380px){
-      body{padding-left:8px;padding-right:8px}
-      header h1{font-size:16px}
-      .question{font-size:26px}
-      .answer{font-size:22px}.explain{font-size:20px}.tip,.trap{font-size:18px}
-      .flashcard,.card-zone{height:470px;min-height:470px}
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flashcards - CPC 16 (R1) – Estoques</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial, Helvetica, sans-serif;}
+body{background:#eef3f8;min-height:100vh;padding:14px;color:#111;}
+.container{width:100%;max-width:760px;margin:0 auto;}
+.topo{background:#003b8f;color:white;padding:18px;border-radius:20px;text-align:center;margin-bottom:16px;box-shadow:0 6px 18px rgba(0,0,0,.18);}
+.topo h1{font-size:30px;letter-spacing:.5px;text-transform:uppercase;}
+.topo p{font-size:18px;margin-top:6px;font-weight:bold;color:#eaf2ff;}
+.card-area{perspective:1200px;width:100%;}
+.card{width:100%;min-height:330px;height:52vh;max-height:470px;position:relative;transform-style:preserve-3d;transition:transform .65s ease;cursor:pointer;}
+.card.virado{transform:rotateY(180deg);}
+.face{position:absolute;inset:0;border-radius:24px;padding:22px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;backface-visibility:hidden;box-shadow:0 8px 22px rgba(0,0,0,.18);border:3px solid rgba(0,59,143,.18);overflow-y:auto;}
+.frente{background:#b3e5fc;color:#000;}
+.verso{background:#f8bbd0;color:#000;transform:rotateY(180deg);}
+.rotulo{font-size:15px;font-weight:900;color:#003b8f;margin-bottom:14px;text-transform:uppercase;}
+.texto{font-size:24px;line-height:1.32;font-weight:800;}
+.verso .texto{font-size:21px;text-align:left;width:100%;font-weight:700;}
+.bloco{background:rgba(255,255,255,.45);border-radius:14px;padding:12px;margin-top:10px;width:100%;}
+.toque{margin-top:14px;font-size:14px;color:#003b8f;font-weight:bold;}
+.indice{text-align:center;margin:14px 0 0;font-size:18px;color:#003b8f;font-weight:900;}
+.barra-bg{height:12px;background:#d8e7f8;border-radius:30px;overflow:hidden;margin-top:10px;}
+.barra{height:100%;width:0%;background:#003b8f;transition:.3s;}
+.controles{display:flex;gap:10px;margin-top:16px;}
+button{flex:1;border:none;border-radius:16px;padding:15px 8px;background:#003b8f;color:white;font-size:18px;font-weight:900;cursor:pointer;box-shadow:0 5px 14px rgba(0,0,0,.18);}
+button:active{transform:scale(.98);}
+.rodape{text-align:center;margin-top:18px;color:#003b8f;font-size:14px;font-weight:bold;}
+@media(max-width:430px){.topo h1{font-size:25px}.topo p{font-size:16px}.card{height:50vh;min-height:330px}.texto{font-size:21px}.verso .texto{font-size:18px}button{font-size:16px;padding:14px 6px}}
+</style>
 </head>
 <body>
-  <header>
-    <h1>Curso de Contabilidade Professor Moreira</h1>
-    <p>📚 Flashcards Premium – CPC 16 (R1) – Estoques</p>
-  </header>
+<div class="container">
+  <div class="topo">
+    <h1>📚 FLASHCARDS</h1>
+    <p>CPC 16 (R1) – Estoques</p>
+  </div>
 
-  <main class="app">
-    <section class="stats">
-      <div class="stat"><span>📚 Cartão</span><strong id="stat-card">1/80</strong></div>
-      <div class="stat"><span>⏰ Tempo</span><strong id="stat-time">00:00:00</strong></div>
-      <div class="stat"><span>🎯 Acertos</span><strong id="stat-acc">0%</strong></div>
-      <div class="stat"><span>⭐ Favoritos</span><strong id="stat-fav">0</strong></div>
-    </section>
+  <div class="card-area">
+    <div class="card" id="card" onclick="virarCard()">
+      <div class="face frente">
+        <div class="rotulo">Pergunta</div>
+        <div class="texto" id="pergunta"></div>
+        <div class="toque">Toque no cartão para virar 🔄</div>
+      </div>
+      <div class="face verso">
+        <div class="rotulo">Resposta comentada</div>
+        <div class="texto" id="resposta"></div>
+        <div class="toque">Toque novamente para voltar 📚</div>
+      </div>
+    </div>
+  </div>
 
-    <section class="progress-wrap">
-      <div class="progress-line"><span id="progress-text">Cartão 1 de 80</span><span id="learned-text">🏆 0 dominados</span></div>
-      <div class="progress-bg"><div class="progress-bar" id="progress-bar"></div></div>
-    </section>
+  <div class="indice" id="contador"></div>
+  <div class="barra-bg"><div class="barra" id="barra"></div></div>
 
-    <section class="modebar">
-      <button id="btn-flash" class="active" onclick="setMode('flash')">📖 Flashcard</button>
-      <button id="btn-quiz" onclick="setMode('quiz')">⚡ Quiz C/E</button>
-    </section>
+  <div class="controles">
+    <button onclick="event.stopPropagation(); anterior();">⬅️ Voltar</button>
+    <button onclick="event.stopPropagation(); reiniciar();">🔄 Reiniciar</button>
+    <button onclick="event.stopPropagation(); proximo();">Avançar ➡️</button>
+  </div>
 
-    <div id="quiz-result" class="quiz-result"></div>
+  <div class="rodape">Curso de Contabilidade Professor Moreira</div>
+</div>
 
-    <section class="card-zone">
-      <article class="flashcard" id="flashcard" onclick="flipCard()">
-        <div class="face front">
-          <div class="tagrow">
-            <span class="tag" id="tag-front">CPC 16</span>
-            <button class="star" id="star-front" onclick="event.stopPropagation();toggleFavorite()">★</button>
-          </div>
-          <div class="question-wrap">
-            <div class="label">📚 PERGUNTA</div>
-            <div class="question" id="question"></div>
-          </div>
-          <div class="tap">Toque no cartão para ver a resposta 🔄</div>
-        </div>
-        <div class="face back">
-          <div class="tagrow">
-            <span class="tag" id="tag-back">✅ RESPOSTA</span>
-            <button class="star" id="star-back" onclick="event.stopPropagation();toggleFavorite()">★</button>
-          </div>
-          <div class="answer-wrap">
-            <div class="answer-title">✅ RESPOSTA</div>
-            <div class="answer" id="answer"></div>
-            <div class="explain" id="explanation"></div>
-            <div class="tip" id="tip"></div>
-            <div class="trap" id="trap"></div>
-          </div>
-          <div class="tap">Toque novamente para voltar à pergunta 📚</div>
-        </div>
-      </article>
-    </section>
+<script>
+const flashcards = [{"pergunta": "O que são estoques segundo o CPC 16?", "resposta": "São ativos mantidos para venda, em processo de produção para venda ou na forma de materiais e suprimentos a serem consumidos.", "explicacao": "O CPC 16 trata estoques como ativos ligados ao ciclo operacional da entidade.", "dica": "🎯 Decore: venda, produção ou consumo no processo produtivo.", "pegadinha": "⚠️ Não confunda estoque com imobilizado usado pela empresa."}, {"pergunta": "Qual é a regra geral de mensuração dos estoques?", "resposta": "Menor valor entre o custo e o valor realizável líquido.", "explicacao": "A entidade compara o custo registrado com o valor que espera realizar na venda líquida.", "dica": "🎯 Regra de ouro: menor entre custo e VRL.", "pegadinha": "⚠️ A banca adora trocar por “maior valor”."}, {"pergunta": "O que é valor realizável líquido?", "resposta": "Preço de venda estimado menos os custos estimados para conclusão e os gastos necessários para realizar a venda.", "explicacao": "É o valor líquido que a entidade espera receber no curso normal dos negócios.", "dica": "🎯 Fórmula: VRL = preço de venda – custos para concluir – despesas de venda.", "pegadinha": "⚠️ Não é simplesmente valor de mercado bruto."}, {"pergunta": "Tributos recuperáveis integram o custo dos estoques?", "resposta": "Não. Tributos recuperáveis são registrados como créditos tributários, não como custo do estoque.", "explicacao": "ICMS recuperável, por exemplo, não deve aumentar o custo da mercadoria.", "dica": "🎯 Recuperável = ativo tributário, não estoque.", "pegadinha": "⚠️ Tributo recuperável não entra no custo."}, {"pergunta": "Tributos não recuperáveis integram o custo dos estoques?", "resposta": "Sim. Tributos não recuperáveis compõem o custo de aquisição.", "explicacao": "Quando a entidade não pode compensar o tributo, ele representa sacrifício necessário para adquirir o estoque.", "dica": "🎯 Não recuperável = entra no custo.", "pegadinha": "⚠️ A banca mistura recuperável com não recuperável."}, {"pergunta": "Frete sobre compra pode integrar o custo dos estoques?", "resposta": "Sim, quando for necessário para colocar o estoque no local e condição atuais.", "explicacao": "Fretes, seguros e manuseio diretamente atribuíveis à aquisição podem compor o custo.", "dica": "🎯 Frete de compra, em regra, ativa no estoque.", "pegadinha": "⚠️ Frete sobre venda é despesa, não estoque."}, {"pergunta": "Frete sobre venda integra o custo do estoque?", "resposta": "Não. Frete sobre venda normalmente é despesa de venda.", "explicacao": "Ele ocorre depois que o estoque já está pronto para venda e está relacionado à entrega ao cliente.", "dica": "🎯 Compra ativa; venda despesa.", "pegadinha": "⚠️ Pegadinha clássica em concursos."}, {"pergunta": "Desconto comercial reduz o custo dos estoques?", "resposta": "Sim. Descontos comerciais, abatimentos e itens semelhantes reduzem o custo de aquisição.", "explicacao": "Como o desconto ocorre na negociação da compra, o custo inicial já deve ser líquido.", "dica": "🎯 Desconto comercial reduz estoque.", "pegadinha": "⚠️ Diferencie de desconto financeiro."}, {"pergunta": "Desconto financeiro reduz o custo do estoque?", "resposta": "Não. Desconto financeiro é receita financeira e não altera o custo do estoque.", "explicacao": "O desconto por pagamento antecipado decorre da forma de liquidação da dívida.", "dica": "🎯 Desconto financeiro vai ao resultado financeiro.", "pegadinha": "⚠️ Não confunda com desconto comercial."}, {"pergunta": "O custo dos estoques inclui custos de aquisição e transformação?", "resposta": "Sim. Também inclui outros custos necessários para colocar os estoques em sua condição e localização atuais.", "explicacao": "O CPC 16 agrupa o custo em aquisição, transformação e outros custos diretamente necessários.", "dica": "🎯 Três blocos: aquisição, transformação e outros necessários.", "pegadinha": "⚠️ Nem todo gasto vira estoque."}, {"pergunta": "Desperdícios anormais entram no custo dos estoques?", "resposta": "Não. Devem ser reconhecidos como despesa do período.", "explicacao": "Desperdícios anormais não agregam benefício econômico ao estoque.", "dica": "🎯 Anormal = despesa.", "pegadinha": "⚠️ A banca tenta ativar desperdício anormal."}, {"pergunta": "Despesas administrativas geralmente integram o custo dos estoques?", "resposta": "Não, salvo se contribuírem diretamente para colocar o estoque em condição e localização atuais.", "explicacao": "Administração geral normalmente não é custo de estoque.", "dica": "🎯 Administração geral = despesa.", "pegadinha": "⚠️ Só entra se for diretamente atribuível."}, {"pergunta": "Despesas de venda integram o custo dos estoques?", "resposta": "Não. Despesas de venda são reconhecidas no resultado.", "explicacao": "Elas não são necessárias para trazer o estoque à condição e localização atuais.", "dica": "🎯 Venda é depois do estoque pronto.", "pegadinha": "⚠️ Despesa de venda não ativa no estoque."}, {"pergunta": "O PEPS é aceito pelo CPC 16?", "resposta": "Sim. O método Primeiro que Entra, Primeiro que Sai é aceito.", "explicacao": "No PEPS, os itens mais antigos são considerados vendidos primeiro.", "dica": "🎯 PEPS aceito.", "pegadinha": "⚠️ Estoque final fica com custos mais recentes."}, {"pergunta": "O custo médio ponderado é aceito pelo CPC 16?", "resposta": "Sim. O CPC 16 permite o custo médio ponderado.", "explicacao": "O custo dos itens é determinado pela média ponderada dos custos existentes e das entradas.", "dica": "🎯 Média ponderada é aceita.", "pegadinha": "⚠️ Pode ser periódica ou móvel."}, {"pergunta": "O UEPS é aceito pelo CPC 16?", "resposta": "Não. O UEPS não é aceito pelas normas internacionais adotadas pelo CPC.", "explicacao": "O CPC 16 permite PEPS e custo médio, mas não o último que entra, primeiro que sai.", "dica": "🎯 UEPS proibido.", "pegadinha": "⚠️ Questão campeã de prova."}, {"pergunta": "Quando se usa identificação específica?", "resposta": "Quando os itens não são normalmente intercambiáveis ou são segregados para projetos específicos.", "explicacao": "Exemplos: veículos específicos, joias exclusivas e bens personalizados.", "dica": "🎯 Item individualizado = identificação específica.", "pegadinha": "⚠️ Não usar identificação específica para estoque comum em massa."}, {"pergunta": "O método do varejo pode ser utilizado?", "resposta": "Sim, quando aproxima o custo, especialmente em varejo com grande quantidade de itens e margens semelhantes.", "explicacao": "O custo é estimado pela redução do preço de venda pela margem bruta apropriada.", "dica": "🎯 Método do varejo é técnica de mensuração.", "pegadinha": "⚠️ Não é método livre sem aproximação razoável."}, {"pergunta": "Perda por redução ao valor realizável líquido afeta o resultado?", "resposta": "Sim. A perda é reconhecida como despesa no resultado.", "explicacao": "Quando o VRL fica menor que o custo, o estoque deve ser reduzido.", "dica": "🎯 Custo maior que VRL = perda.", "pegadinha": "⚠️ Não deixe o estoque acima do que será recuperado."}, {"pergunta": "A perda por redução ao VRL pode ser revertida?", "resposta": "Sim, quando deixarem de existir as circunstâncias que causaram a redução.", "explicacao": "A reversão é limitada ao valor da perda anteriormente reconhecida.", "dica": "🎯 Melhorou o VRL? Pode reverter dentro do limite.", "pegadinha": "⚠️ Não pode aumentar acima do custo original."}, {"pergunta": "Quando o estoque vendido vira despesa?", "resposta": "Quando a respectiva receita é reconhecida, o valor contábil do estoque deve ser reconhecido como despesa.", "explicacao": "Essa despesa normalmente é o CMV ou custo dos produtos vendidos.", "dica": "🎯 Venda reconhecida = baixa do estoque para resultado.", "pegadinha": "⚠️ Não mantenha no ativo item já vendido."}, {"pergunta": "Qual lançamento básico da baixa de mercadoria vendida?", "resposta": "Débito em CMV e crédito em Estoques/Mercadorias.", "explicacao": "O estoque sai do ativo e passa para o resultado como custo.", "dica": "🎯 D: CMV / C: Estoques.", "pegadinha": "⚠️ A receita da venda é lançamento separado."}, {"pergunta": "Juros embutidos em compra a prazo integram o estoque?", "resposta": "Não, quando há elemento de financiamento relevante. A diferença é despesa financeira ao longo do tempo.", "explicacao": "O estoque deve ser reconhecido pelo preço equivalente à vista, quando aplicável.", "dica": "🎯 AVP: estoque pelo valor à vista; juros no resultado financeiro.", "pegadinha": "⚠️ Não coloque financiamento dentro do estoque."}, {"pergunta": "Seguro sobre compra pode integrar o estoque?", "resposta": "Sim, se for necessário para trazer o item até o local e condição atuais.", "explicacao": "Seguro de transporte da compra é gasto diretamente atribuível à aquisição.", "dica": "🎯 Seguro na compra pode ativar.", "pegadinha": "⚠️ Seguro administrativo geral não entra."}, {"pergunta": "Materiais de consumo usados na produção podem ser estoques?", "resposta": "Sim. Materiais e suprimentos a serem consumidos na produção são estoques.", "explicacao": "O CPC 16 inclui materiais que serão consumidos no processo produtivo ou na prestação de serviços.", "dica": "🎯 Matéria-prima também é estoque.", "pegadinha": "⚠️ Estoque não é só mercadoria pronta."}, {"pergunta": "Produtos em elaboração são estoques?", "resposta": "Sim. Produtos em processo de produção para venda são estoques.", "explicacao": "Na indústria, os estoques incluem matéria-prima, produtos em elaboração e produtos acabados.", "dica": "🎯 Em elaboração = estoque.", "pegadinha": "⚠️ Não confunda com despesa em andamento sem ativo."}, {"pergunta": "Produtos acabados são estoques?", "resposta": "Sim. Produtos acabados destinados à venda são estoques.", "explicacao": "Eles permanecem no ativo até a venda ou baixa.", "dica": "🎯 Acabado para venda = estoque.", "pegadinha": "⚠️ Se for usado pela empresa, pode ser imobilizado."}, {"pergunta": "Mercadorias para revenda são estoques?", "resposta": "Sim. São bens adquiridos e mantidos para venda no curso normal dos negócios.", "explicacao": "É o caso típico de empresas comerciais.", "dica": "🎯 Comércio: mercadorias = estoque.", "pegadinha": "⚠️ Mercadoria comprada para uso próprio não é estoque de revenda."}, {"pergunta": "Ociosidade anormal deve ser incluída no custo dos estoques?", "resposta": "Não. O custo fixo não alocado por ociosidade anormal deve ser despesa.", "explicacao": "Custos fixos são alocados com base na capacidade normal de produção.", "dica": "🎯 Ociosidade anormal = resultado.", "pegadinha": "⚠️ Não superavalie o estoque em períodos de baixa produção."}, {"pergunta": "Custos indiretos fixos são alocados com base em quê?", "resposta": "Com base na capacidade normal de produção.", "explicacao": "A capacidade normal representa a produção média esperada em condições normais.", "dica": "🎯 CIF fixo usa capacidade normal.", "pegadinha": "⚠️ Produção baixa não aumenta custo unitário indefinidamente."}, {"pergunta": "Custos indiretos variáveis são alocados como?", "resposta": "Com base no uso real das instalações de produção.", "explicacao": "Eles variam diretamente ou quase diretamente com o volume produzido.", "dica": "🎯 CIF variável acompanha produção real.", "pegadinha": "⚠️ Diferencie fixo e variável."}, {"pergunta": "Custo de transformação inclui mão de obra direta?", "resposta": "Sim. Inclui custos diretamente relacionados às unidades produzidas, como mão de obra direta.", "explicacao": "Também inclui alocação sistemática dos custos indiretos de produção.", "dica": "🎯 Transformação = MOD + CIF.", "pegadinha": "⚠️ Não inclua venda e administração geral."}, {"pergunta": "Custo de aquisição inclui preço de compra?", "resposta": "Sim. O preço de compra é componente básico do custo de aquisição.", "explicacao": "Depois são feitos ajustes como tributos não recuperáveis, fretes e dedução de descontos comerciais.", "dica": "🎯 Preço de compra é ponto de partida.", "pegadinha": "⚠️ Preço bruto pode precisar de ajustes."}, {"pergunta": "Abatimentos reduzem o custo dos estoques?", "resposta": "Sim. Abatimentos e descontos comerciais reduzem o custo de aquisição.", "explicacao": "Eles diminuem o sacrifício econômico necessário para adquirir o item.", "dica": "🎯 Abatimento na compra reduz estoque.", "pegadinha": "⚠️ Não trate como receita operacional."}, {"pergunta": "Armazenagem sempre entra no custo do estoque?", "resposta": "Não. Só entra quando necessária ao processo produtivo antes de etapa adicional de produção.", "explicacao": "Armazenagem comum após o produto estar pronto geralmente é despesa.", "dica": "🎯 Armazenagem necessária ao processo pode entrar.", "pegadinha": "⚠️ Armazenagem depois de pronto geralmente não entra."}, {"pergunta": "Estoque pode ser reconhecido acima do valor recuperável?", "resposta": "Não. Deve ser ajustado ao valor realizável líquido quando este for menor que o custo.", "explicacao": "A prudência impede manter estoque por valor superior ao que se espera recuperar.", "dica": "🎯 Não carregar estoque irrecuperável.", "pegadinha": "⚠️ Custo histórico não é absoluto."}, {"pergunta": "CPC 16 trata de ativo biológico relacionado à atividade agrícola?", "resposta": "Não. Ativos biológicos são tratados por norma específica, como CPC 29.", "explicacao": "O CPC 16 não se aplica a determinados itens que possuem normas próprias.", "dica": "🎯 Ativo biológico: CPC 29.", "pegadinha": "⚠️ Produto agrícola após colheita pode entrar no CPC 16."}, {"pergunta": "Produto agrícola colhido pode ser tratado como estoque?", "resposta": "Sim, após a colheita, o produto agrícola passa a ser tratado como estoque conforme aplicável.", "explicacao": "Antes da colheita, o ativo biológico segue norma específica.", "dica": "🎯 Após colheita, olhar CPC 16.", "pegadinha": "⚠️ Antes da colheita não é CPC 16."}, {"pergunta": "Serviços em andamento podem gerar estoques?", "resposta": "Sim, para prestadores de serviços, custos de serviços ainda não reconhecidos como receita podem ser estoques.", "explicacao": "Enquanto a receita correspondente não é reconhecida, certos custos podem permanecer como ativo.", "dica": "🎯 Serviço também pode ter estoque.", "pegadinha": "⚠️ Não pense apenas em mercadorias físicas."}, {"pergunta": "O VRL é específico da entidade?", "resposta": "Sim. O valor realizável líquido é baseado no valor que a entidade espera realizar no curso normal dos negócios.", "explicacao": "Ele considera preço estimado, custos de conclusão e venda da própria entidade.", "dica": "🎯 VRL é valor líquido esperado pela entidade.", "pegadinha": "⚠️ Não confunda com valor justo obrigatoriamente."}, {"pergunta": "Valor justo e valor realizável líquido são sempre iguais?", "resposta": "Não. Valor justo é conceito de mercado; VRL é valor líquido esperado na venda normal pela entidade.", "explicacao": "Podem coincidir, mas não são sinônimos.", "dica": "🎯 VRL ≠ valor justo necessariamente.", "pegadinha": "⚠️ Pegadinha conceitual frequente."}, {"pergunta": "A estimativa do VRL considera eventos posteriores?", "resposta": "Pode considerar eventos posteriores que confirmem condições existentes ao fim do período.", "explicacao": "A mensuração deve refletir a melhor estimativa disponível.", "dica": "🎯 Use evidências relacionadas à condição na data-base.", "pegadinha": "⚠️ Não use evento totalmente novo para distorcer a data-base."}, {"pergunta": "Matéria-prima deve ser reduzida ao VRL quando o produto acabado será vendido com lucro?", "resposta": "Em regra, não. Materiais não são reduzidos abaixo do custo se o produto final for vendido pelo custo ou acima dele.", "explicacao": "A análise considera a recuperação por meio do produto final.", "dica": "🎯 Matéria-prima olha a recuperação no produto final.", "pegadinha": "⚠️ Não reduza automaticamente toda matéria-prima."}, {"pergunta": "Se o custo da matéria-prima aumentar, isso significa perda de estoque?", "resposta": "Não necessariamente. A perda depende da comparação entre custo e valor realizável líquido.", "explicacao": "Aumento de preço de reposição pode até indicar que o estoque antigo está recuperável.", "dica": "🎯 Sempre compare custo e VRL.", "pegadinha": "⚠️ Não use reposição isoladamente como perda."}, {"pergunta": "Itens de estoque danificados podem exigir redução ao VRL?", "resposta": "Sim. Danos, obsolescência ou queda de preço podem indicar redução ao valor realizável líquido.", "explicacao": "O estoque deve representar valor recuperável.", "dica": "🎯 Danificado ou obsoleto: atenção ao VRL.", "pegadinha": "⚠️ Não mantenha item sem recuperação pelo custo."}, {"pergunta": "Obsolescência pode gerar baixa ou perda?", "resposta": "Sim. Se reduzir ou eliminar a capacidade de venda, pode exigir ajuste ou baixa.", "explicacao": "O ativo precisa gerar benefício econômico futuro.", "dica": "🎯 Obsoleto = revisar recuperabilidade.", "pegadinha": "⚠️ Obsolescência não pode ser ignorada."}, {"pergunta": "O custo padrão pode ser utilizado?", "resposta": "Sim, se os resultados se aproximarem do custo real.", "explicacao": "Custo padrão é técnica de mensuração aceita quando revisado regularmente.", "dica": "🎯 Custo padrão pode, desde que aproxime o real.", "pegadinha": "⚠️ Padrão desatualizado não serve."}, {"pergunta": "A venda de estoque reconhece receita e baixa de custo?", "resposta": "Sim. A receita é reconhecida conforme norma própria e o estoque é baixado como despesa.", "explicacao": "A baixa gera CMV ou custo dos produtos/serviços vendidos.", "dica": "🎯 Venda tem dois efeitos: receita e custo.", "pegadinha": "⚠️ Não confunda lançamento de venda com lançamento do CMV."}, {"pergunta": "CMV é conta patrimonial?", "resposta": "Não. CMV é conta de resultado, uma despesa/custo reconhecido quando ocorre a venda.", "explicacao": "A conta patrimonial é Estoques/Mercadorias.", "dica": "🎯 CMV fica no resultado.", "pegadinha": "⚠️ Estoque é ativo; CMV é resultado."}, {"pergunta": "Estoque é ativo circulante em regra?", "resposta": "Sim, normalmente é ativo circulante, pois será realizado no ciclo operacional.", "explicacao": "Mesmo que o ciclo operacional ultrapasse 12 meses, pode continuar circulante se realizado no ciclo normal.", "dica": "🎯 Estoque acompanha o ciclo operacional.", "pegadinha": "⚠️ Não use apenas 12 meses quando há ciclo operacional maior."}, {"pergunta": "Ciclo operacional não identificável presume quantos meses?", "resposta": "Presume-se duração de 12 meses.", "explicacao": "Essa regra auxilia na classificação entre circulante e não circulante.", "dica": "🎯 Ciclo não claro = 12 meses.", "pegadinha": "⚠️ Muito cobrado em contabilidade geral."}, {"pergunta": "Compra de mercadoria a prazo gera estoque e fornecedores?", "resposta": "Sim. Débito em estoque e crédito em fornecedores, pelo valor apropriado.", "explicacao": "Se houver tributos recuperáveis ou AVP, o valor do estoque deve ser ajustado.", "dica": "🎯 D: Estoques / C: Fornecedores.", "pegadinha": "⚠️ Verifique impostos recuperáveis e juros."}, {"pergunta": "Compra de mercadoria à vista reduz caixa e aumenta estoque?", "resposta": "Sim, desde que seja mercadoria para revenda ou item classificável como estoque.", "explicacao": "É uma troca entre ativos: sai caixa e entra estoque.", "dica": "🎯 Compra à vista: ativo por ativo.", "pegadinha": "⚠️ Não há despesa no momento da compra, em regra."}, {"pergunta": "A compra de estoque é despesa imediata?", "resposta": "Não. Em regra, é ativo até a venda, consumo ou perda.", "explicacao": "A despesa surge quando o estoque é vendido, consumido ou perde valor.", "dica": "🎯 Compra ativa; venda baixa para CMV.", "pegadinha": "⚠️ Muitos alunos erram classificando como despesa imediata."}, {"pergunta": "O estoque pode ser avaliado apenas pelo preço de venda?", "resposta": "Não. A regra é menor entre custo e valor realizável líquido.", "explicacao": "Preço de venda sozinho não considera custos de conclusão e venda.", "dica": "🎯 Use VRL, não preço bruto.", "pegadinha": "⚠️ Preço de venda não é VRL."}, {"pergunta": "Custos de conclusão entram no cálculo do VRL?", "resposta": "Sim. Devem ser deduzidos do preço de venda estimado.", "explicacao": "Se o produto ainda precisa ser terminado, esses gastos reduzem o valor líquido realizável.", "dica": "🎯 VRL deduz conclusão e venda.", "pegadinha": "⚠️ Não esqueça custos para concluir."}, {"pergunta": "Gastos necessários para vender entram no cálculo do VRL?", "resposta": "Sim. São deduzidos do preço de venda estimado.", "explicacao": "Comissões e despesas necessárias à venda reduzem o valor líquido esperado.", "dica": "🎯 Venda estimada menos gastos de venda.", "pegadinha": "⚠️ VRL não é venda bruta."}, {"pergunta": "Uma perda de estoque aumenta o ativo?", "resposta": "Não. Perda reduz o ativo e reconhece despesa.", "explicacao": "A redução ao VRL ou baixa diminui o valor contábil do estoque.", "dica": "🎯 Perda: despesa e redução do ativo.", "pegadinha": "⚠️ Perda não gera receita."}, {"pergunta": "Conta redutora de estoque possui natureza credora?", "resposta": "Sim. Perdas estimadas para redução ao VRL reduzem o ativo e têm natureza credora.", "explicacao": "É semelhante a outras contas retificadoras do ativo.", "dica": "🎯 Redutora de ativo = natureza credora.", "pegadinha": "⚠️ Embora apareça no ativo, seu saldo é credor."}, {"pergunta": "O CPC 16 permite livre escolha de qualquer critério de estoque?", "resposta": "Não. A entidade deve usar critérios aceitos e consistentes para itens de natureza semelhante.", "explicacao": "Critérios diferentes só fazem sentido para estoques com natureza ou uso diferentes.", "dica": "🎯 Consistência é essencial.", "pegadinha": "⚠️ Não escolha método para manipular resultado."}, {"pergunta": "Itens semelhantes devem usar o mesmo critério de custeio?", "resposta": "Sim, estoques de natureza e uso semelhantes devem receber o mesmo critério.", "explicacao": "Isso preserva comparabilidade e consistência.", "dica": "🎯 Mesma natureza e uso = mesmo método.", "pegadinha": "⚠️ A troca arbitrária de método é vedada."}, {"pergunta": "A entidade pode estimar custos pelo método do varejo sem controle individual detalhado?", "resposta": "Sim, quando a técnica se aproxima do custo e é adequada ao tipo de estoque.", "explicacao": "Muito usada em varejo com grande volume de itens e margens semelhantes.", "dica": "🎯 Varejo: preço de venda menos margem.", "pegadinha": "⚠️ A aproximação precisa ser razoável."}, {"pergunta": "PEPS significa que o estoque final tende a refletir compras recentes?", "resposta": "Sim. Como as primeiras entradas são baixadas primeiro, sobram os itens mais recentes.", "explicacao": "Esse é o raciocínio básico do fluxo de custos no PEPS.", "dica": "🎯 PEPS: sai antigo, fica recente.", "pegadinha": "⚠️ Método de custo, não necessariamente fluxo físico real."}, {"pergunta": "No custo médio, cada nova compra pode alterar o custo unitário?", "resposta": "Sim, especialmente no custo médio móvel.", "explicacao": "A média é recalculada conforme novas entradas ocorrem.", "dica": "🎯 Nova entrada muda a média.", "pegadinha": "⚠️ No periódico, a média é calculada ao fim do período."}, {"pergunta": "O custo específico é adequado para itens intercambiáveis em massa?", "resposta": "Não. Para itens comuns e intercambiáveis, normalmente usa-se PEPS ou média ponderada.", "explicacao": "Identificação específica é para itens individualizados.", "dica": "🎯 Item comum = PEPS ou média.", "pegadinha": "⚠️ Não aplique custo específico indevidamente."}, {"pergunta": "Estoque recebido em compra deve incluir impostos de importação não recuperáveis?", "resposta": "Sim. Imposto de importação e tributos não recuperáveis compõem o custo.", "explicacao": "São gastos necessários para adquirir e disponibilizar o estoque.", "dica": "🎯 Importação não recuperável entra no custo.", "pegadinha": "⚠️ Recuperável fica fora."}, {"pergunta": "Custos de manuseio diretamente ligados à compra podem integrar estoque?", "resposta": "Sim, se necessários para colocar o estoque no local e condição atuais.", "explicacao": "Manuseio, transporte e outros gastos diretamente atribuíveis podem ser capitalizados.", "dica": "🎯 Necessário e direto = pode integrar.", "pegadinha": "⚠️ Manuseio administrativo geral não entra."}, {"pergunta": "Salários da equipe de vendas integram o estoque?", "resposta": "Não. São despesas de venda.", "explicacao": "Não são necessários para produzir ou trazer o estoque à condição e localização atuais.", "dica": "🎯 Vendedor = despesa de venda.", "pegadinha": "⚠️ Não confunda com mão de obra direta de produção."}, {"pergunta": "Mão de obra direta de produção integra o custo dos estoques?", "resposta": "Sim. Integra o custo de transformação.", "explicacao": "É diretamente atribuível às unidades produzidas.", "dica": "🎯 MOD entra no produto.", "pegadinha": "⚠️ Mão de obra administrativa não entra."}, {"pergunta": "Depreciação de máquinas produtivas pode integrar o estoque?", "resposta": "Sim, por meio dos custos indiretos de fabricação alocados.", "explicacao": "A depreciação da fábrica é custo de produção, desde que relacionada à fabricação.", "dica": "🎯 Depreciação fabril pode compor CIF.", "pegadinha": "⚠️ Depreciação do setor administrativo é despesa."}, {"pergunta": "Depreciação do prédio administrativo integra o estoque?", "resposta": "Não, normalmente é despesa administrativa.", "explicacao": "Não está diretamente relacionada à transformação dos estoques.", "dica": "🎯 Administração geral não compõe estoque.", "pegadinha": "⚠️ Fábrica e administração têm tratamentos diferentes."}, {"pergunta": "Em prova, “menor entre custo e mercado” é sempre tecnicamente preciso?", "resposta": "Não. O CPC 16 fala em menor entre custo e valor realizável líquido.", "explicacao": "Algumas bancas usam linguagem antiga, mas o termo correto é VRL.", "dica": "🎯 Termo técnico: valor realizável líquido.", "pegadinha": "⚠️ Cuidado com “mercado” sem detalhamento."}, {"pergunta": "Se o preço de venda é R$ 100 e gastos de venda são R$ 10, o VRL é R$ 90?", "resposta": "Sim, se não houver custos adicionais de conclusão.", "explicacao": "VRL = preço de venda estimado menos gastos necessários para vender e concluir.", "dica": "🎯 100 – 10 = 90.", "pegadinha": "⚠️ Se houver custos para concluir, também deduza."}, {"pergunta": "Se o custo é R$ 120 e o VRL é R$ 100, o estoque deve ficar por R$ 120?", "resposta": "Não. Deve ser ajustado para R$ 100.", "explicacao": "A perda de R$ 20 deve ser reconhecida no resultado.", "dica": "🎯 Estoque fica pelo menor valor.", "pegadinha": "⚠️ Não mantenha custo acima do VRL."}, {"pergunta": "Se o custo é R$ 80 e o VRL é R$ 100, o estoque deve ser aumentado para R$ 100?", "resposta": "Não. Permanece pelo custo de R$ 80.", "explicacao": "A regra é o menor valor entre custo e VRL.", "dica": "🎯 Menor valor: R$ 80.", "pegadinha": "⚠️ Não reconheça ganho antes da venda."}, {"pergunta": "A reversão de perda pode ultrapassar o custo original?", "resposta": "Não. A reversão é limitada ao valor anteriormente reduzido.", "explicacao": "O estoque não deve ser mensurado acima do custo que teria sido registrado.", "dica": "🎯 Reverte até o limite do custo.", "pegadinha": "⚠️ Reversão não cria ganho além do custo."}, {"pergunta": "A baixa de estoque vendido deve acompanhar a competência?", "resposta": "Sim. O custo deve ser reconhecido no mesmo período da receita relacionada.", "explicacao": "Isso respeita a confrontação entre receitas e despesas.", "dica": "🎯 Receita da venda e CMV no mesmo período.", "pegadinha": "⚠️ Não empurre CMV para outro período."}, {"pergunta": "Itens comprados para distribuição gratuita podem ser estoque?", "resposta": "Podem ser ativos enquanto controlados, mas a finalidade e norma aplicável devem ser analisadas.", "explicacao": "Em entidades públicas ou sem fins lucrativos, pode haver tratamento específico. Para CPC 16, foco é venda ou consumo no processo.", "dica": "🎯 Analise finalidade do item.", "pegadinha": "⚠️ Cuidado com setor público e normas específicas."}, {"pergunta": "No CPC 16, estoque é sempre bem tangível?", "resposta": "Em regra envolve bens e materiais, mas serviços em andamento também podem gerar custos classificados como estoques.", "explicacao": "A ideia central é ativo ligado à venda, produção ou prestação ainda não reconhecida como receita.", "dica": "🎯 Não limite mentalmente a mercadorias.", "pegadinha": "⚠️ Serviços podem ter estoque de custos."}, {"pergunta": "A FGV costuma cobrar quais pegadinhas no CPC 16?", "resposta": "Menor entre custo e VRL, tributos recuperáveis, frete de compra/venda, descontos comerciais/financeiros e UEPS proibido.", "explicacao": "Esses pontos aparecem muito porque exigem classificação precisa.", "dica": "🎯 Revise esses cinco blocos antes da prova.", "pegadinha": "⚠️ Erro comum: colocar tudo no estoque."}, {"pergunta": "Na compra para revenda, ICMS recuperável entra no estoque?", "resposta": "Não. Deve ser registrado em conta de tributos a recuperar.", "explicacao": "O estoque fica líquido do tributo recuperável.", "dica": "🎯 ICMS recuperável fora do estoque.", "pegadinha": "⚠️ ICMS não recuperável entra."}, {"pergunta": "IPI não recuperável para empresa comercial pode entrar no custo?", "resposta": "Sim. Quando não recuperável, compõe o custo de aquisição.", "explicacao": "Para empresa comercial, o IPI frequentemente é tratado como custo quando não recuperável.", "dica": "🎯 IPI não recuperável entra.", "pegadinha": "⚠️ Verifique o enunciado: recuperável ou não?"}, {"pergunta": "O custo do estoque inclui todos os gastos da empresa no período?", "resposta": "Não. Apenas gastos relacionados à aquisição, transformação e condição/localização atuais dos estoques.", "explicacao": "Gastos gerais sem relação direta são despesas.", "dica": "🎯 Só entra o necessário ao estoque.", "pegadinha": "⚠️ “Todos os gastos” é expressão perigosa."}, {"pergunta": "CPC 16 é tema importante para CFC e concursos?", "resposta": "Sim. É recorrente em questões de contabilidade geral, custos, CPCs e demonstrações contábeis.", "explicacao": "As bancas exploram conceitos e pequenos cálculos.", "dica": "🎯 Domine CPC 16 para ganhar pontos rápidos.", "pegadinha": "⚠️ Questões parecem simples, mas têm pegadinhas."}];
+let atual = 0;
 
-    <section class="quiz-buttons" id="quiz-buttons">
-      <button class="btn good" onclick="answerQuiz(true)">✔️ CERTO</button>
-      <button class="btn bad" onclick="answerQuiz(false)">❌ ERRADO</button>
-    </section>
-
-    <section class="nav-buttons">
-      <button class="btn secondary" onclick="prevCard()">⬅️ Anterior</button>
-      <button class="btn secondary" onclick="nextCard()">Próximo ➡️</button>
-    </section>
-
-    <section class="extra-buttons">
-      <button class="btn gold" onclick="toggleFavorite()">⭐ Favoritar</button>
-      <button class="btn" onclick="markLearned()">🏆 Dominei</button>
-      <button class="btn secondary" onclick="toggleDeck()">🔢 Cartões</button>
-      <button class="btn bad" onclick="resetAll()">🔄 Reiniciar</button>
-    </section>
-
-    <section class="deck-menu" id="deck-menu">
-      <div class="deck-grid" id="deck-grid"></div>
-    </section>
-  </main>
-
-  <footer>
-    Curso de Contabilidade Professor Moreira
-    <small>WhatsApp (61) 98532-3574</small>
-  </footer>
-
-  <script>
-    const cards = [
-      {q:'O que são estoques segundo o CPC 16?',a:'São ativos mantidos para venda, em processo de produção para venda ou na forma de materiais e suprimentos a serem consumidos.',e:'O CPC 16 trata estoques como ativos ligados ao ciclo operacional da entidade.',t:'🎯 Decore: venda, produção ou consumo no processo produtivo.',p:'⚠️ Não confunda estoque com imobilizado usado pela empresa.',ce:true},
-      {q:'Qual é a regra geral de mensuração dos estoques?',a:'Menor valor entre o custo e o valor realizável líquido.',e:'A entidade compara o custo registrado com o valor que espera realizar na venda líquida.',t:'🎯 Regra de ouro: menor entre custo e VRL.',p:'⚠️ A banca adora trocar por “maior valor”.',ce:true},
-      {q:'O que é valor realizável líquido?',a:'Preço de venda estimado menos os custos estimados para conclusão e os gastos necessários para realizar a venda.',e:'É o valor líquido que a entidade espera receber no curso normal dos negócios.',t:'🎯 Fórmula: VRL = preço de venda – custos para concluir – despesas de venda.',p:'⚠️ Não é simplesmente valor de mercado bruto.',ce:true},
-      {q:'Tributos recuperáveis integram o custo dos estoques?',a:'Não. Tributos recuperáveis são registrados como créditos tributários, não como custo do estoque.',e:'ICMS recuperável, por exemplo, não deve aumentar o custo da mercadoria.',t:'🎯 Recuperável = ativo tributário, não estoque.',p:'⚠️ Tributo recuperável não entra no custo.',ce:false},
-      {q:'Tributos não recuperáveis integram o custo dos estoques?',a:'Sim. Tributos não recuperáveis compõem o custo de aquisição.',e:'Quando a entidade não pode compensar o tributo, ele representa sacrifício necessário para adquirir o estoque.',t:'🎯 Não recuperável = entra no custo.',p:'⚠️ A banca mistura recuperável com não recuperável.',ce:true},
-      {q:'Frete sobre compra pode integrar o custo dos estoques?',a:'Sim, quando for necessário para colocar o estoque no local e condição atuais.',e:'Fretes, seguros e manuseio diretamente atribuíveis à aquisição podem compor o custo.',t:'🎯 Frete de compra, em regra, ativa no estoque.',p:'⚠️ Frete sobre venda é despesa, não estoque.',ce:true},
-      {q:'Frete sobre venda integra o custo do estoque?',a:'Não. Frete sobre venda normalmente é despesa de venda.',e:'Ele ocorre depois que o estoque já está pronto para venda e está relacionado à entrega ao cliente.',t:'🎯 Compra ativa; venda despesa.',p:'⚠️ Pegadinha clássica em concursos.',ce:false},
-      {q:'Desconto comercial reduz o custo dos estoques?',a:'Sim. Descontos comerciais, abatimentos e itens semelhantes reduzem o custo de aquisição.',e:'Como o desconto ocorre na negociação da compra, o custo inicial já deve ser líquido.',t:'🎯 Desconto comercial reduz estoque.',p:'⚠️ Diferencie de desconto financeiro.',ce:true},
-      {q:'Desconto financeiro reduz o custo do estoque?',a:'Não. Desconto financeiro é receita financeira e não altera o custo do estoque.',e:'O desconto por pagamento antecipado decorre da forma de liquidação da dívida.',t:'🎯 Desconto financeiro vai ao resultado financeiro.',p:'⚠️ Não confunda com desconto comercial.',ce:false},
-      {q:'O custo dos estoques inclui custos de aquisição e transformação?',a:'Sim. Também inclui outros custos necessários para colocar os estoques em sua condição e localização atuais.',e:'O CPC 16 agrupa o custo em aquisição, transformação e outros custos diretamente necessários.',t:'🎯 Três blocos: aquisição, transformação e outros necessários.',p:'⚠️ Nem todo gasto vira estoque.',ce:true},
-      {q:'Desperdícios anormais entram no custo dos estoques?',a:'Não. Devem ser reconhecidos como despesa do período.',e:'Desperdícios anormais não agregam benefício econômico ao estoque.',t:'🎯 Anormal = despesa.',p:'⚠️ A banca tenta ativar desperdício anormal.',ce:false},
-      {q:'Despesas administrativas geralmente integram o custo dos estoques?',a:'Não, salvo se contribuírem diretamente para colocar o estoque em condição e localização atuais.',e:'Administração geral normalmente não é custo de estoque.',t:'🎯 Administração geral = despesa.',p:'⚠️ Só entra se for diretamente atribuível.',ce:false},
-      {q:'Despesas de venda integram o custo dos estoques?',a:'Não. Despesas de venda são reconhecidas no resultado.',e:'Elas não são necessárias para trazer o estoque à condição e localização atuais.',t:'🎯 Venda é depois do estoque pronto.',p:'⚠️ Despesa de venda não ativa no estoque.',ce:false},
-      {q:'O PEPS é aceito pelo CPC 16?',a:'Sim. O método Primeiro que Entra, Primeiro que Sai é aceito.',e:'No PEPS, os itens mais antigos são considerados vendidos primeiro.',t:'🎯 PEPS aceito.',p:'⚠️ Estoque final fica com custos mais recentes.',ce:true},
-      {q:'O custo médio ponderado é aceito pelo CPC 16?',a:'Sim. O CPC 16 permite o custo médio ponderado.',e:'O custo dos itens é determinado pela média ponderada dos custos existentes e das entradas.',t:'🎯 Média ponderada é aceita.',p:'⚠️ Pode ser periódica ou móvel.',ce:true},
-      {q:'O UEPS é aceito pelo CPC 16?',a:'Não. O UEPS não é aceito pelas normas internacionais adotadas pelo CPC.',e:'O CPC 16 permite PEPS e custo médio, mas não o último que entra, primeiro que sai.',t:'🎯 UEPS proibido.',p:'⚠️ Questão campeã de prova.',ce:false},
-      {q:'Quando se usa identificação específica?',a:'Quando os itens não são normalmente intercambiáveis ou são segregados para projetos específicos.',e:'Exemplos: veículos específicos, joias exclusivas e bens personalizados.',t:'🎯 Item individualizado = identificação específica.',p:'⚠️ Não usar identificação específica para estoque comum em massa.',ce:true},
-      {q:'O método do varejo pode ser utilizado?',a:'Sim, quando aproxima o custo, especialmente em varejo com grande quantidade de itens e margens semelhantes.',e:'O custo é estimado pela redução do preço de venda pela margem bruta apropriada.',t:'🎯 Método do varejo é técnica de mensuração.',p:'⚠️ Não é método livre sem aproximação razoável.',ce:true},
-      {q:'Perda por redução ao valor realizável líquido afeta o resultado?',a:'Sim. A perda é reconhecida como despesa no resultado.',e:'Quando o VRL fica menor que o custo, o estoque deve ser reduzido.',t:'🎯 Custo maior que VRL = perda.',p:'⚠️ Não deixe o estoque acima do que será recuperado.',ce:true},
-      {q:'A perda por redução ao VRL pode ser revertida?',a:'Sim, quando deixarem de existir as circunstâncias que causaram a redução.',e:'A reversão é limitada ao valor da perda anteriormente reconhecida.',t:'🎯 Melhorou o VRL? Pode reverter dentro do limite.',p:'⚠️ Não pode aumentar acima do custo original.',ce:true},
-      {q:'Quando o estoque vendido vira despesa?',a:'Quando a respectiva receita é reconhecida, o valor contábil do estoque deve ser reconhecido como despesa.',e:'Essa despesa normalmente é o CMV ou custo dos produtos vendidos.',t:'🎯 Venda reconhecida = baixa do estoque para resultado.',p:'⚠️ Não mantenha no ativo item já vendido.',ce:true},
-      {q:'Qual lançamento básico da baixa de mercadoria vendida?',a:'Débito em CMV e crédito em Estoques/Mercadorias.',e:'O estoque sai do ativo e passa para o resultado como custo.',t:'🎯 D: CMV / C: Estoques.',p:'⚠️ A receita da venda é lançamento separado.',ce:true},
-      {q:'Juros embutidos em compra a prazo integram o estoque?',a:'Não, quando há elemento de financiamento relevante. A diferença é despesa financeira ao longo do tempo.',e:'O estoque deve ser reconhecido pelo preço equivalente à vista, quando aplicável.',t:'🎯 AVP: estoque pelo valor à vista; juros no resultado financeiro.',p:'⚠️ Não coloque financiamento dentro do estoque.',ce:false},
-      {q:'Seguro sobre compra pode integrar o estoque?',a:'Sim, se for necessário para trazer o item até o local e condição atuais.',e:'Seguro de transporte da compra é gasto diretamente atribuível à aquisição.',t:'🎯 Seguro na compra pode ativar.',p:'⚠️ Seguro administrativo geral não entra.',ce:true},
-      {q:'Materiais de consumo usados na produção podem ser estoques?',a:'Sim. Materiais e suprimentos a serem consumidos na produção são estoques.',e:'O CPC 16 inclui materiais que serão consumidos no processo produtivo ou na prestação de serviços.',t:'🎯 Matéria-prima também é estoque.',p:'⚠️ Estoque não é só mercadoria pronta.',ce:true},
-      {q:'Produtos em elaboração são estoques?',a:'Sim. Produtos em processo de produção para venda são estoques.',e:'Na indústria, os estoques incluem matéria-prima, produtos em elaboração e produtos acabados.',t:'🎯 Em elaboração = estoque.',p:'⚠️ Não confunda com despesa em andamento sem ativo.',ce:true},
-      {q:'Produtos acabados são estoques?',a:'Sim. Produtos acabados destinados à venda são estoques.',e:'Eles permanecem no ativo até a venda ou baixa.',t:'🎯 Acabado para venda = estoque.',p:'⚠️ Se for usado pela empresa, pode ser imobilizado.',ce:true},
-      {q:'Mercadorias para revenda são estoques?',a:'Sim. São bens adquiridos e mantidos para venda no curso normal dos negócios.',e:'É o caso típico de empresas comerciais.',t:'🎯 Comércio: mercadorias = estoque.',p:'⚠️ Mercadoria comprada para uso próprio não é estoque de revenda.',ce:true},
-      {q:'Ociosidade anormal deve ser incluída no custo dos estoques?',a:'Não. O custo fixo não alocado por ociosidade anormal deve ser despesa.',e:'Custos fixos são alocados com base na capacidade normal de produção.',t:'🎯 Ociosidade anormal = resultado.',p:'⚠️ Não superavalie o estoque em períodos de baixa produção.',ce:false},
-      {q:'Custos indiretos fixos são alocados com base em quê?',a:'Com base na capacidade normal de produção.',e:'A capacidade normal representa a produção média esperada em condições normais.',t:'🎯 CIF fixo usa capacidade normal.',p:'⚠️ Produção baixa não aumenta custo unitário indefinidamente.',ce:true},
-      {q:'Custos indiretos variáveis são alocados como?',a:'Com base no uso real das instalações de produção.',e:'Eles variam diretamente ou quase diretamente com o volume produzido.',t:'🎯 CIF variável acompanha produção real.',p:'⚠️ Diferencie fixo e variável.',ce:true},
-      {q:'Custo de transformação inclui mão de obra direta?',a:'Sim. Inclui custos diretamente relacionados às unidades produzidas, como mão de obra direta.',e:'Também inclui alocação sistemática dos custos indiretos de produção.',t:'🎯 Transformação = MOD + CIF.',p:'⚠️ Não inclua venda e administração geral.',ce:true},
-      {q:'Custo de aquisição inclui preço de compra?',a:'Sim. O preço de compra é componente básico do custo de aquisição.',e:'Depois são feitos ajustes como tributos não recuperáveis, fretes e dedução de descontos comerciais.',t:'🎯 Preço de compra é ponto de partida.',p:'⚠️ Preço bruto pode precisar de ajustes.',ce:true},
-      {q:'Abatimentos reduzem o custo dos estoques?',a:'Sim. Abatimentos e descontos comerciais reduzem o custo de aquisição.',e:'Eles diminuem o sacrifício econômico necessário para adquirir o item.',t:'🎯 Abatimento na compra reduz estoque.',p:'⚠️ Não trate como receita operacional.',ce:true},
-      {q:'Armazenagem sempre entra no custo do estoque?',a:'Não. Só entra quando necessária ao processo produtivo antes de etapa adicional de produção.',e:'Armazenagem comum após o produto estar pronto geralmente é despesa.',t:'🎯 Armazenagem necessária ao processo pode entrar.',p:'⚠️ Armazenagem depois de pronto geralmente não entra.',ce:false},
-      {q:'Estoque pode ser reconhecido acima do valor recuperável?',a:'Não. Deve ser ajustado ao valor realizável líquido quando este for menor que o custo.',e:'A prudência impede manter estoque por valor superior ao que se espera recuperar.',t:'🎯 Não carregar estoque irrecuperável.',p:'⚠️ Custo histórico não é absoluto.',ce:false},
-      {q:'CPC 16 trata de ativo biológico relacionado à atividade agrícola?',a:'Não. Ativos biológicos são tratados por norma específica, como CPC 29.',e:'O CPC 16 não se aplica a determinados itens que possuem normas próprias.',t:'🎯 Ativo biológico: CPC 29.',p:'⚠️ Produto agrícola após colheita pode entrar no CPC 16.',ce:false},
-      {q:'Produto agrícola colhido pode ser tratado como estoque?',a:'Sim, após a colheita, o produto agrícola passa a ser tratado como estoque conforme aplicável.',e:'Antes da colheita, o ativo biológico segue norma específica.',t:'🎯 Após colheita, olhar CPC 16.',p:'⚠️ Antes da colheita não é CPC 16.',ce:true},
-      {q:'Serviços em andamento podem gerar estoques?',a:'Sim, para prestadores de serviços, custos de serviços ainda não reconhecidos como receita podem ser estoques.',e:'Enquanto a receita correspondente não é reconhecida, certos custos podem permanecer como ativo.',t:'🎯 Serviço também pode ter estoque.',p:'⚠️ Não pense apenas em mercadorias físicas.',ce:true},
-      {q:'O VRL é específico da entidade?',a:'Sim. O valor realizável líquido é baseado no valor que a entidade espera realizar no curso normal dos negócios.',e:'Ele considera preço estimado, custos de conclusão e venda da própria entidade.',t:'🎯 VRL é valor líquido esperado pela entidade.',p:'⚠️ Não confunda com valor justo obrigatoriamente.',ce:true},
-      {q:'Valor justo e valor realizável líquido são sempre iguais?',a:'Não. Valor justo é conceito de mercado; VRL é valor líquido esperado na venda normal pela entidade.',e:'Podem coincidir, mas não são sinônimos.',t:'🎯 VRL ≠ valor justo necessariamente.',p:'⚠️ Pegadinha conceitual frequente.',ce:false},
-      {q:'A estimativa do VRL considera eventos posteriores?',a:'Pode considerar eventos posteriores que confirmem condições existentes ao fim do período.',e:'A mensuração deve refletir a melhor estimativa disponível.',t:'🎯 Use evidências relacionadas à condição na data-base.',p:'⚠️ Não use evento totalmente novo para distorcer a data-base.',ce:true},
-      {q:'Matéria-prima deve ser reduzida ao VRL quando o produto acabado será vendido com lucro?',a:'Em regra, não. Materiais não são reduzidos abaixo do custo se o produto final for vendido pelo custo ou acima dele.',e:'A análise considera a recuperação por meio do produto final.',t:'🎯 Matéria-prima olha a recuperação no produto final.',p:'⚠️ Não reduza automaticamente toda matéria-prima.',ce:false},
-      {q:'Se o custo da matéria-prima aumentar, isso significa perda de estoque?',a:'Não necessariamente. A perda depende da comparação entre custo e valor realizável líquido.',e:'Aumento de preço de reposição pode até indicar que o estoque antigo está recuperável.',t:'🎯 Sempre compare custo e VRL.',p:'⚠️ Não use reposição isoladamente como perda.',ce:false},
-      {q:'Itens de estoque danificados podem exigir redução ao VRL?',a:'Sim. Danos, obsolescência ou queda de preço podem indicar redução ao valor realizável líquido.',e:'O estoque deve representar valor recuperável.',t:'🎯 Danificado ou obsoleto: atenção ao VRL.',p:'⚠️ Não mantenha item sem recuperação pelo custo.',ce:true},
-      {q:'Obsolescência pode gerar baixa ou perda?',a:'Sim. Se reduzir ou eliminar a capacidade de venda, pode exigir ajuste ou baixa.',e:'O ativo precisa gerar benefício econômico futuro.',t:'🎯 Obsoleto = revisar recuperabilidade.',p:'⚠️ Obsolescência não pode ser ignorada.',ce:true},
-      {q:'O custo padrão pode ser utilizado?',a:'Sim, se os resultados se aproximarem do custo real.',e:'Custo padrão é técnica de mensuração aceita quando revisado regularmente.',t:'🎯 Custo padrão pode, desde que aproxime o real.',p:'⚠️ Padrão desatualizado não serve.',ce:true},
-      {q:'A venda de estoque reconhece receita e baixa de custo?',a:'Sim. A receita é reconhecida conforme norma própria e o estoque é baixado como despesa.',e:'A baixa gera CMV ou custo dos produtos/serviços vendidos.',t:'🎯 Venda tem dois efeitos: receita e custo.',p:'⚠️ Não confunda lançamento de venda com lançamento do CMV.',ce:true},
-      {q:'CMV é conta patrimonial?',a:'Não. CMV é conta de resultado, uma despesa/custo reconhecido quando ocorre a venda.',e:'A conta patrimonial é Estoques/Mercadorias.',t:'🎯 CMV fica no resultado.',p:'⚠️ Estoque é ativo; CMV é resultado.',ce:false},
-      {q:'Estoque é ativo circulante em regra?',a:'Sim, normalmente é ativo circulante, pois será realizado no ciclo operacional.',e:'Mesmo que o ciclo operacional ultrapasse 12 meses, pode continuar circulante se realizado no ciclo normal.',t:'🎯 Estoque acompanha o ciclo operacional.',p:'⚠️ Não use apenas 12 meses quando há ciclo operacional maior.',ce:true},
-      {q:'Ciclo operacional não identificável presume quantos meses?',a:'Presume-se duração de 12 meses.',e:'Essa regra auxilia na classificação entre circulante e não circulante.',t:'🎯 Ciclo não claro = 12 meses.',p:'⚠️ Muito cobrado em contabilidade geral.',ce:true},
-      {q:'Compra de mercadoria a prazo gera estoque e fornecedores?',a:'Sim. Débito em estoque e crédito em fornecedores, pelo valor apropriado.',e:'Se houver tributos recuperáveis ou AVP, o valor do estoque deve ser ajustado.',t:'🎯 D: Estoques / C: Fornecedores.',p:'⚠️ Verifique impostos recuperáveis e juros.',ce:true},
-      {q:'Compra de mercadoria à vista reduz caixa e aumenta estoque?',a:'Sim, desde que seja mercadoria para revenda ou item classificável como estoque.',e:'É uma troca entre ativos: sai caixa e entra estoque.',t:'🎯 Compra à vista: ativo por ativo.',p:'⚠️ Não há despesa no momento da compra, em regra.',ce:true},
-      {q:'A compra de estoque é despesa imediata?',a:'Não. Em regra, é ativo até a venda, consumo ou perda.',e:'A despesa surge quando o estoque é vendido, consumido ou perde valor.',t:'🎯 Compra ativa; venda baixa para CMV.',p:'⚠️ Muitos alunos erram classificando como despesa imediata.',ce:false},
-      {q:'O estoque pode ser avaliado apenas pelo preço de venda?',a:'Não. A regra é menor entre custo e valor realizável líquido.',e:'Preço de venda sozinho não considera custos de conclusão e venda.',t:'🎯 Use VRL, não preço bruto.',p:'⚠️ Preço de venda não é VRL.',ce:false},
-      {q:'Custos de conclusão entram no cálculo do VRL?',a:'Sim. Devem ser deduzidos do preço de venda estimado.',e:'Se o produto ainda precisa ser terminado, esses gastos reduzem o valor líquido realizável.',t:'🎯 VRL deduz conclusão e venda.',p:'⚠️ Não esqueça custos para concluir.',ce:true},
-      {q:'Gastos necessários para vender entram no cálculo do VRL?',a:'Sim. São deduzidos do preço de venda estimado.',e:'Comissões e despesas necessárias à venda reduzem o valor líquido esperado.',t:'🎯 Venda estimada menos gastos de venda.',p:'⚠️ VRL não é venda bruta.',ce:true},
-      {q:'Uma perda de estoque aumenta o ativo?',a:'Não. Perda reduz o ativo e reconhece despesa.',e:'A redução ao VRL ou baixa diminui o valor contábil do estoque.',t:'🎯 Perda: despesa e redução do ativo.',p:'⚠️ Perda não gera receita.',ce:false},
-      {q:'Conta redutora de estoque possui natureza credora?',a:'Sim. Perdas estimadas para redução ao VRL reduzem o ativo e têm natureza credora.',e:'É semelhante a outras contas retificadoras do ativo.',t:'🎯 Redutora de ativo = natureza credora.',p:'⚠️ Embora apareça no ativo, seu saldo é credor.',ce:true},
-      {q:'O CPC 16 permite livre escolha de qualquer critério de estoque?',a:'Não. A entidade deve usar critérios aceitos e consistentes para itens de natureza semelhante.',e:'Critérios diferentes só fazem sentido para estoques com natureza ou uso diferentes.',t:'🎯 Consistência é essencial.',p:'⚠️ Não escolha método para manipular resultado.',ce:false},
-      {q:'Itens semelhantes devem usar o mesmo critério de custeio?',a:'Sim, estoques de natureza e uso semelhantes devem receber o mesmo critério.',e:'Isso preserva comparabilidade e consistência.',t:'🎯 Mesma natureza e uso = mesmo método.',p:'⚠️ A troca arbitrária de método é vedada.',ce:true},
-      {q:'A entidade pode estimar custos pelo método do varejo sem controle individual detalhado?',a:'Sim, quando a técnica se aproxima do custo e é adequada ao tipo de estoque.',e:'Muito usada em varejo com grande volume de itens e margens semelhantes.',t:'🎯 Varejo: preço de venda menos margem.',p:'⚠️ A aproximação precisa ser razoável.',ce:true},
-      {q:'PEPS significa que o estoque final tende a refletir compras recentes?',a:'Sim. Como as primeiras entradas são baixadas primeiro, sobram os itens mais recentes.',e:'Esse é o raciocínio básico do fluxo de custos no PEPS.',t:'🎯 PEPS: sai antigo, fica recente.',p:'⚠️ Método de custo, não necessariamente fluxo físico real.',ce:true},
-      {q:'No custo médio, cada nova compra pode alterar o custo unitário?',a:'Sim, especialmente no custo médio móvel.',e:'A média é recalculada conforme novas entradas ocorrem.',t:'🎯 Nova entrada muda a média.',p:'⚠️ No periódico, a média é calculada ao fim do período.',ce:true},
-      {q:'O custo específico é adequado para itens intercambiáveis em massa?',a:'Não. Para itens comuns e intercambiáveis, normalmente usa-se PEPS ou média ponderada.',e:'Identificação específica é para itens individualizados.',t:'🎯 Item comum = PEPS ou média.',p:'⚠️ Não aplique custo específico indevidamente.',ce:false},
-      {q:'Estoque recebido em compra deve incluir impostos de importação não recuperáveis?',a:'Sim. Imposto de importação e tributos não recuperáveis compõem o custo.',e:'São gastos necessários para adquirir e disponibilizar o estoque.',t:'🎯 Importação não recuperável entra no custo.',p:'⚠️ Recuperável fica fora.',ce:true},
-      {q:'Custos de manuseio diretamente ligados à compra podem integrar estoque?',a:'Sim, se necessários para colocar o estoque no local e condição atuais.',e:'Manuseio, transporte e outros gastos diretamente atribuíveis podem ser capitalizados.',t:'🎯 Necessário e direto = pode integrar.',p:'⚠️ Manuseio administrativo geral não entra.',ce:true},
-      {q:'Salários da equipe de vendas integram o estoque?',a:'Não. São despesas de venda.',e:'Não são necessários para produzir ou trazer o estoque à condição e localização atuais.',t:'🎯 Vendedor = despesa de venda.',p:'⚠️ Não confunda com mão de obra direta de produção.',ce:false},
-      {q:'Mão de obra direta de produção integra o custo dos estoques?',a:'Sim. Integra o custo de transformação.',e:'É diretamente atribuível às unidades produzidas.',t:'🎯 MOD entra no produto.',p:'⚠️ Mão de obra administrativa não entra.',ce:true},
-      {q:'Depreciação de máquinas produtivas pode integrar o estoque?',a:'Sim, por meio dos custos indiretos de fabricação alocados.',e:'A depreciação da fábrica é custo de produção, desde que relacionada à fabricação.',t:'🎯 Depreciação fabril pode compor CIF.',p:'⚠️ Depreciação do setor administrativo é despesa.',ce:true},
-      {q:'Depreciação do prédio administrativo integra o estoque?',a:'Não, normalmente é despesa administrativa.',e:'Não está diretamente relacionada à transformação dos estoques.',t:'🎯 Administração geral não compõe estoque.',p:'⚠️ Fábrica e administração têm tratamentos diferentes.',ce:false},
-      {q:'Em prova, “menor entre custo e mercado” é sempre tecnicamente preciso?',a:'Não. O CPC 16 fala em menor entre custo e valor realizável líquido.',e:'Algumas bancas usam linguagem antiga, mas o termo correto é VRL.',t:'🎯 Termo técnico: valor realizável líquido.',p:'⚠️ Cuidado com “mercado” sem detalhamento.',ce:false},
-      {q:'Se o preço de venda é R$ 100 e gastos de venda são R$ 10, o VRL é R$ 90?',a:'Sim, se não houver custos adicionais de conclusão.',e:'VRL = preço de venda estimado menos gastos necessários para vender e concluir.',t:'🎯 100 – 10 = 90.',p:'⚠️ Se houver custos para concluir, também deduza.',ce:true},
-      {q:'Se o custo é R$ 120 e o VRL é R$ 100, o estoque deve ficar por R$ 120?',a:'Não. Deve ser ajustado para R$ 100.',e:'A perda de R$ 20 deve ser reconhecida no resultado.',t:'🎯 Estoque fica pelo menor valor.',p:'⚠️ Não mantenha custo acima do VRL.',ce:false},
-      {q:'Se o custo é R$ 80 e o VRL é R$ 100, o estoque deve ser aumentado para R$ 100?',a:'Não. Permanece pelo custo de R$ 80.',e:'A regra é o menor valor entre custo e VRL.',t:'🎯 Menor valor: R$ 80.',p:'⚠️ Não reconheça ganho antes da venda.',ce:false},
-      {q:'A reversão de perda pode ultrapassar o custo original?',a:'Não. A reversão é limitada ao valor anteriormente reduzido.',e:'O estoque não deve ser mensurado acima do custo que teria sido registrado.',t:'🎯 Reverte até o limite do custo.',p:'⚠️ Reversão não cria ganho além do custo.',ce:false},
-      {q:'A baixa de estoque vendido deve acompanhar a competência?',a:'Sim. O custo deve ser reconhecido no mesmo período da receita relacionada.',e:'Isso respeita a confrontação entre receitas e despesas.',t:'🎯 Receita da venda e CMV no mesmo período.',p:'⚠️ Não empurre CMV para outro período.',ce:true},
-      {q:'Itens comprados para distribuição gratuita podem ser estoque?',a:'Podem ser ativos enquanto controlados, mas a finalidade e norma aplicável devem ser analisadas.',e:'Em entidades públicas ou sem fins lucrativos, pode haver tratamento específico. Para CPC 16, foco é venda ou consumo no processo.',t:'🎯 Analise finalidade do item.',p:'⚠️ Cuidado com setor público e normas específicas.',ce:true},
-      {q:'No CPC 16, estoque é sempre bem tangível?',a:'Em regra envolve bens e materiais, mas serviços em andamento também podem gerar custos classificados como estoques.',e:'A ideia central é ativo ligado à venda, produção ou prestação ainda não reconhecida como receita.',t:'🎯 Não limite mentalmente a mercadorias.',p:'⚠️ Serviços podem ter estoque de custos.',ce:false},
-      {q:'A FGV costuma cobrar quais pegadinhas no CPC 16?',a:'Menor entre custo e VRL, tributos recuperáveis, frete de compra/venda, descontos comerciais/financeiros e UEPS proibido.',e:'Esses pontos aparecem muito porque exigem classificação precisa.',t:'🎯 Revise esses cinco blocos antes da prova.',p:'⚠️ Erro comum: colocar tudo no estoque.',ce:true},
-      {q:'Na compra para revenda, ICMS recuperável entra no estoque?',a:'Não. Deve ser registrado em conta de tributos a recuperar.',e:'O estoque fica líquido do tributo recuperável.',t:'🎯 ICMS recuperável fora do estoque.',p:'⚠️ ICMS não recuperável entra.',ce:false},
-      {q:'IPI não recuperável para empresa comercial pode entrar no custo?',a:'Sim. Quando não recuperável, compõe o custo de aquisição.',e:'Para empresa comercial, o IPI frequentemente é tratado como custo quando não recuperável.',t:'🎯 IPI não recuperável entra.',p:'⚠️ Verifique o enunciado: recuperável ou não?',ce:true},
-      {q:'O custo do estoque inclui todos os gastos da empresa no período?',a:'Não. Apenas gastos relacionados à aquisição, transformação e condição/localização atuais dos estoques.',e:'Gastos gerais sem relação direta são despesas.',t:'🎯 Só entra o necessário ao estoque.',p:'⚠️ “Todos os gastos” é expressão perigosa.',ce:false},
-      {q:'CPC 16 é tema importante para CFC e concursos?',a:'Sim. É recorrente em questões de contabilidade geral, custos, CPCs e demonstrações contábeis.',e:'As bancas exploram conceitos e pequenos cálculos.',t:'🎯 Domine CPC 16 para ganhar pontos rápidos.',p:'⚠️ Questões parecem simples, mas têm pegadinhas.',ce:true}
-    ];
-
-    const KEY='pm_cpc16_flashcards_azul_v1';
-    let state = JSON.parse(localStorage.getItem(KEY) || '{}');
-    state = Object.assign({idx:0,flipped:false,mode:'flash',fav:[],learned:[],right:0,wrong:0,time:0,answered:{}}, state);
-    let timer = null;
-
-    const $ = id => document.getElementById(id);
-    function save(){ localStorage.setItem(KEY, JSON.stringify(state)); }
-    function pad(n){ return String(n).padStart(2,'0'); }
-    function timeFmt(s){ let h=Math.floor(s/3600), m=Math.floor((s%3600)/60), sec=s%60; return `${pad(h)}:${pad(m)}:${pad(sec)}`; }
-
-    function render(){
-      const c=cards[state.idx];
-      $('flashcard').classList.toggle('flipped', state.flipped);
-      $('question').textContent=c.q;
-      $('answer').textContent=c.a;
-      $('explanation').innerHTML='💡 <strong>Explicação:</strong> '+c.e;
-      $('tip').textContent=c.t;
-      $('trap').textContent=c.p;
-      $('tag-front').textContent=`CPC 16 • ${state.idx+1}`;
-      $('tag-back').textContent=c.ce?'Gabarito C/E: CERTO':'Gabarito C/E: ERRADO';
-      const fav = state.fav.includes(state.idx);
-      $('star-front').classList.toggle('on', fav);
-      $('star-back').classList.toggle('on', fav);
-      $('stat-card').textContent=`${state.idx+1}/${cards.length}`;
-      $('progress-text').textContent=`Cartão ${state.idx+1} de ${cards.length}`;
-      $('progress-bar').style.width=((state.idx+1)/cards.length*100)+'%';
-      $('stat-fav').textContent=state.fav.length;
-      $('learned-text').textContent=`🏆 ${state.learned.length} dominados`;
-      const total=state.right+state.wrong;
-      $('stat-acc').textContent= total ? Math.round(state.right/total*100)+'%' : '0%';
-      $('stat-time').textContent=timeFmt(state.time);
-      $('btn-flash').classList.toggle('active', state.mode==='flash');
-      $('btn-quiz').classList.toggle('active', state.mode==='quiz');
-      $('quiz-buttons').classList.toggle('show', state.mode==='quiz');
-      buildDeck();
-      save();
-    }
-
-    function flipCard(){ state.flipped=!state.flipped; hideResult(); render(); }
-    function nextCard(){ state.idx=(state.idx+1)%cards.length; state.flipped=false; hideResult(); render(); }
-    function prevCard(){ state.idx=(state.idx-1+cards.length)%cards.length; state.flipped=false; hideResult(); render(); }
-    function setMode(m){ state.mode=m; state.flipped=false; hideResult(); render(); }
-    function toggleFavorite(){
-      const i=state.idx;
-      state.fav = state.fav.includes(i) ? state.fav.filter(x=>x!==i) : [...state.fav,i];
-      render();
-    }
-    function markLearned(){
-      if(!state.learned.includes(state.idx)) state.learned.push(state.idx);
-      state.flipped=true;
-      render();
-      setTimeout(nextCard,650);
-    }
-    function answerQuiz(ans){
-      const c=cards[state.idx];
-      const ok = ans===c.ce;
-      if(!state.answered[state.idx]){
-        ok ? state.right++ : state.wrong++;
-        state.answered[state.idx]=true;
-      }
-      state.flipped=true;
-      const box=$('quiz-result');
-      box.className='quiz-result '+(ok?'ok':'no');
-      box.textContent= ok ? '✅ Correto! Veja a explicação no verso.' : '❌ Incorreto! Leia a explicação no verso.';
-      render();
-    }
-    function hideResult(){ const box=$('quiz-result'); box.className='quiz-result'; box.textContent=''; }
-    function resetAll(){
-      if(confirm('Deseja reiniciar todo o progresso?')){
-        localStorage.removeItem(KEY);
-        state={idx:0,flipped:false,mode:'flash',fav:[],learned:[],right:0,wrong:0,time:0,answered:{}};
-        hideResult(); render();
-      }
-    }
-    function toggleDeck(){ $('deck-menu').classList.toggle('show'); buildDeck(); }
-    function goCard(i){ state.idx=i; state.flipped=false; hideResult(); render(); window.scrollTo({top:0,behavior:'smooth'}); }
-    function buildDeck(){
-      const grid=$('deck-grid'); grid.innerHTML='';
-      cards.forEach((_,i)=>{
-        const b=document.createElement('button');
-        b.textContent=i+1;
-        if(i===state.idx)b.classList.add('current');
-        if(state.learned.includes(i))b.classList.add('done');
-        if(state.fav.includes(i))b.classList.add('fav');
-        b.onclick=()=>goCard(i);
-        grid.appendChild(b);
-      });
-    }
-
-    timer=setInterval(()=>{state.time++; $('stat-time').textContent=timeFmt(state.time); save();},1000);
-    render();
-  </script>
+function carregar(){
+  const f = flashcards[atual];
+  document.getElementById('pergunta').innerHTML = f.pergunta;
+  document.getElementById('resposta').innerHTML = `
+    <div class="bloco"><strong>Resposta:</strong><br>${f.resposta}</div>
+    <div class="bloco"><strong>Explicação:</strong><br>${f.explicacao}</div>
+    <div class="bloco"><strong>Dica:</strong><br>${f.dica}</div>
+    <div class="bloco"><strong>Pegadinha:</strong><br>${f.pegadinha}</div>
+  `;
+  document.getElementById('contador').innerHTML = `Cartão ${atual+1} de ${flashcards.length}`;
+  document.getElementById('barra').style.width = ((atual+1)/flashcards.length*100) + '%';
+  document.getElementById('card').classList.remove('virado');
+}
+function virarCard(){document.getElementById('card').classList.toggle('virado');}
+function proximo(){if(atual < flashcards.length-1){atual++; carregar();}}
+function anterior(){if(atual > 0){atual--; carregar();}}
+function reiniciar(){atual=0; carregar();}
+carregar();
+</script>
 </body>
 </html>
